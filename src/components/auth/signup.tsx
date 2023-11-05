@@ -35,7 +35,7 @@ const SignUp = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       console.log(data);
-      const res = await fetch(`${Backend_URL}/auth/register`, {
+      const res = await fetch(`${Backend_URL}/auth/sign-up`, {
         method: "POST",
         body: JSON.stringify({
           name: data.name,

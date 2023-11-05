@@ -17,7 +17,7 @@ const DashBoardLayout = async (props: Props) => {
       <div className="grid-cols-4 border-r shadow h-screen p-2">
         <Link
           className="p-3 rounded hover:bg-emerald-600 hover:text-white hover:shadow transition "
-          href={`/dashboard/user/${session?.user.id}`}
+          href={`/dashboard/user/profile`}
         >
           User Profile
         </Link>

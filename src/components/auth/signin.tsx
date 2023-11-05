@@ -33,7 +33,7 @@ const SignIn = () => {
     try {
       console.log(data);
       const result = await signIn("graciesold-store-api", {
-        username: data.email,
+        email: data.email,
         password: data.password,
         redirect: false,
         // callbackUrl: "/",

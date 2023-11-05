@@ -13,10 +13,7 @@ const SignInButton = () => {
     return (
       <div className="flex gap-4 ml-auto">
         <p className="text-sky-600">{session.user.name}</p>
-        <Button
-          onClick={() => signOut()}
-          className="flex gap-4 ml-auto text-red-600"
-        >
+        <Button onClick={() => signOut()} className="">
           Sign Out
         </Button>
         <ModeToggle />

@@ -6,19 +6,18 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 //RefreshToken
 async function refreshToken(token: JWT): Promise<JWT> {
-  const res = await fetch(`${Backend_URL}/auth/refresh`, {
+  //console.log("token", token);
+  const res = await fetch(`${Backend_URL}/auth/token/refresh`, {
     method: "POST",
     headers: {
-      authorization: `Refresh ${token.backendTokens.refreshToken}`,
+      authorization: token.backendTokens.refreshToken,
     },
   });
-  console.log("refreshed");
-
   const response = await res.json();
 
   return {
     ...token,
-    backendTokens: response,
+    data: response,
   };
 }
 
@@ -29,20 +28,21 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       type: "credentials",
       credentials: {
-        username: {
-          label: "Username",
+        email: {
+          label: "Email",
           type: "text",
           placeholder: "jsmith",
         },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials?.username || !credentials?.password) return null;
-        const { username, password } = credentials;
-        const res = await fetch(`${Backend_URL}/auth/login`, {
+        if (!credentials?.email || !credentials?.password) return null;
+        const { email, password } = credentials;
+        //console.log(Backend_URL);
+        const res = await fetch(`${Backend_URL}/auth/sign-in`, {
           method: "POST",
           body: JSON.stringify({
-            username,
+            email,
             password,
           }),
           headers: {
@@ -51,11 +51,11 @@ export const authOptions: NextAuthOptions = {
         });
         if (res.status == 401) {
           console.log(res.statusText);
-
           return null;
         }
         const user = await res.json();
-        return user;
+        console.log("user", user);
+        return user.data;
       },
     }),
   ],
@@ -63,7 +63,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) return { ...token, ...user };
-
       if (new Date().getTime() < token.backendTokens.expiresIn) return token;
 
       return await refreshToken(token);
