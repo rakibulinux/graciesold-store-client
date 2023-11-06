@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Providers from "@/lib/Providers";
-import AppBar from "@/components/home/AppBar";
-
+import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,20 +17,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Providers>
+    <Providers>
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <AppBar />
             {children}
           </ThemeProvider>
-        </Providers>
-      </body>
-    </html>
+          <Toaster />
+        </body>
+      </html>
+    </Providers>
   );
 }

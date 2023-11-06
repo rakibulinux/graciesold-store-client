@@ -9,8 +9,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
-import toast from "react-hot-toast";
 import { Backend_URL } from "@/lib/Constants";
+import { useToast } from "@/components/ui/use-toast";
 
 type FormValues = {
   name: string;
@@ -19,6 +19,7 @@ type FormValues = {
 };
 
 const SignUp = () => {
+  const { toast } = useToast();
   const router = useRouter();
 
   const form = useForm<FormValues>({
@@ -34,7 +35,6 @@ const SignUp = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      console.log(data);
       const res = await fetch(`${Backend_URL}/auth/sign-up`, {
         method: "POST",
         body: JSON.stringify({
@@ -47,11 +47,17 @@ const SignUp = () => {
         },
       });
       if (res?.ok) {
-        toast.success("SignUp Successfully");
+        toast({
+          title: "SignUp Successfully",
+          variant: "success",
+        });
         router.push("/sign-in");
       }
     } catch (error: any) {
-      toast.error(`${error.message}`);
+      toast({
+        title: error.message,
+        variant: "destructive",
+      });
     }
   };
   return (

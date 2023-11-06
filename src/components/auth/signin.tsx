@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
 import { signIn } from "next-auth/react";
+import { toast, useToast } from "../ui/use-toast";
 
 type FormValues = {
   email: string;
@@ -19,7 +20,7 @@ type FormValues = {
 
 const SignIn = () => {
   const router = useRouter();
-
+  const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -31,7 +32,6 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      console.log(data);
       const result = await signIn("graciesold-store-api", {
         email: data.email,
         password: data.password,
@@ -39,12 +39,19 @@ const SignIn = () => {
         // callbackUrl: "/",
       });
       // window.location.reload();
-      console.log(result);
+
       if (result?.ok && !result.error) {
+        toast({
+          title: "User signin succesfully",
+          description: data.email,
+          variant: "success",
+        });
         router.push("/");
       }
-    } catch (error) {
-      console.log(`${error}`);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+      });
     }
   };
   return (

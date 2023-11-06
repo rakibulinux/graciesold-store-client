@@ -1,3 +1,4 @@
+import { toast, useToast } from "@/components/ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
 import { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -6,7 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 //RefreshToken
 async function refreshToken(token: JWT): Promise<JWT> {
-  //console.log("token", token);
   const res = await fetch(`${Backend_URL}/auth/token/refresh`, {
     method: "POST",
     headers: {
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null;
         const { email, password } = credentials;
-        //console.log(Backend_URL);
+
         const res = await fetch(`${Backend_URL}/auth/sign-in`, {
           method: "POST",
           body: JSON.stringify({
@@ -54,7 +54,6 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
         const user = await res.json();
-        console.log("user", user);
         return user.data;
       },
     }),
