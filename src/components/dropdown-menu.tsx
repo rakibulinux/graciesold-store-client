@@ -12,10 +12,23 @@ import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { signOut, useSession } from "next-auth/react";
+import { Backend_URL } from "@/lib/Constants";
 
 export function DropdownMenuItems() {
-  const { data: session }: any = useSession();
-
+  const { data: session } = useSession();
+  const signOutUser = async () => {
+    const response = await fetch(`${Backend_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${session?.backendTokens.accessToken}`,
+      },
+    });
+    console.log(response);
+    signOut();
+    if (response.ok) {
+    }
+  };
   console.log(session);
   const profilePic = session?.user?.profile?.profileImg;
   return (
@@ -40,7 +53,9 @@ export function DropdownMenuItems() {
         <DropdownMenuItem>
           <Link href={`/${session?.user?.role}/settings`}>Settings</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut()}>SignOut</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOutUser()}>
+          SignOut
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

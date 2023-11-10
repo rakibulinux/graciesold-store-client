@@ -30,10 +30,10 @@ export const adminRoutes = [
     href: "/admin/profile",
   },
   {
-    label: "Services",
+    label: "Products",
     icon: Repeat,
     color: "text-orange-700",
-    href: "/admin/services",
+    href: "/admin/products",
   },
   {
     label: "Categories",
@@ -42,13 +42,7 @@ export const adminRoutes = [
     href: "/admin/categories",
   },
   {
-    label: "Posts",
-    icon: Code,
-    color: "text-green-700",
-    href: "/admin/posts",
-  },
-  {
-    label: "Order",
+    label: "Orders",
     icon: Store,
     color: "text-green-700",
     href: "/admin/orders",

@@ -30,10 +30,10 @@ export const adminTools = [
     bgColor: "bg-emerald-500/10",
   },
   {
-    label: "Services",
+    label: "Products",
     icon: Repeat,
     color: "text-orange-700",
-    href: "/admin/services",
+    href: "/admin/products",
     bgColor: "bg-pink-700/10",
   },
   {
@@ -44,17 +44,10 @@ export const adminTools = [
     bgColor: "bg-orange-700/10",
   },
   {
-    label: "Posts",
-    icon: Code,
-    color: "text-green-700",
-    href: "/admin/posts",
-    bgColor: "bg-green-700/10",
-  },
-  {
-    label: "Stores",
+    label: "Orders",
     icon: Store,
     color: "text-green-700",
-    href: "/admin/Stores",
+    href: "/admin/orders",
 
     bgColor: "bg-green-600/10",
   },
@@ -105,10 +98,10 @@ export const customerTools = [
     bgColor: "bg-emerald-500/10",
   },
   {
-    label: "Booking History",
+    label: "Order History",
     icon: Store,
     color: "text-pink-700",
-    href: "/customer/booking-history",
+    href: "/customer/order-history",
     bgColor: "bg-pink-700/10",
   },
   {

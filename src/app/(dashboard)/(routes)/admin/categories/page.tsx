@@ -1,51 +1,31 @@
-"use client";
-
 import { Layers2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-import Loading from "@/app/loading";
 import { DataTable } from "@/components/data-table";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
-import { useCategoriesQuery } from "@/redux/api/categoriesApi";
-import { useDebounce } from "@/redux/hooks";
 import Link from "next/link";
-import { useState } from "react";
 import { columns } from "./columns";
 
-type FormValues = {
-  name: string;
-  email: string;
-  role?: string;
-  password: string;
-};
+const data = [
+  {
+    name: "Order 1",
+    status: "Pending",
+  },
+  {
+    name: "Order 2",
+    status: "Shipped",
+  },
+  {
+    name: "Order 3",
+    status: "Delivered",
+  },
+  {
+    name: "Order 4",
+    status: "Pending",
+  },
+];
 
 const CategoryListPage = () => {
-  const [size, setSize] = useState<number>(10);
-  const [page, setPage] = useState<number>(1);
-  const [sortBy, setSortBy] = useState<string>("");
-  const [sortOrder, setSortOrder] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const query: Record<string, any> = {};
-
-  query["limit"] = size;
-  query["page"] = page;
-  query["sortBy"] = sortBy;
-  query["sortOrder"] = sortOrder;
-
-  const debouncedTerm = useDebounce({
-    searchQuery: searchTerm,
-    delay: 600,
-  });
-
-  if (!!debouncedTerm) {
-    query["searchTerm"] = debouncedTerm;
-  }
-
-  const { data, isLoading } = useCategoriesQuery({ ...query });
-  if (isLoading) {
-    return <Loading />;
-  }
   return (
     <div className="w-11/12 mx-auto">
       <Heading
@@ -68,7 +48,7 @@ const CategoryListPage = () => {
           </Link>
         </div>
       </div>
-      <DataTable columns={columns} data={(data && data.categories) || []} />
+      <DataTable columns={columns} data={data || []} />
     </div>
   );
 };

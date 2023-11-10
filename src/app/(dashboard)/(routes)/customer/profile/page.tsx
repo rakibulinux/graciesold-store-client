@@ -1,10 +1,14 @@
 import { User2 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, getData } from "@/lib/utils";
 import { Heading } from "@/components/heading";
 import Profile from "@/components/profile/profile";
+import { IUser } from "@/interface/userProfile";
+import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
 
 const ProfilePage = async () => {
+  const session = await getServerAuthSession();
+  const data: IUser = await getData("me", session?.backendTokens?.accessToken!);
   return (
     <div>
       <Heading
@@ -22,7 +26,7 @@ const ProfilePage = async () => {
               "p-8 w-full flex items-start gap-x-8 rounded-lg bg-white border border-black/10 bg-muted"
             )}
           >
-            <Profile />
+            <Profile user={data?.data} />
           </div>
         </div>
       </div>

@@ -41,17 +41,15 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   const onImageUpload = (data: any) => {
     setSelectedImage(data.profileImg);
   };
-
+  console.log(user);
   const router = useRouter();
 
   const form = useForm<FormValues>({
-    // defaultValues: {
-    //   name: user?.name || "",
-    //   bio: user?.profile?.bio || "",
-    //   profileImg: user?.profile?.profileImg || selectedImage,
-    //   gender: user?.profile?.gender || "Male", // Initialize with default value
-    //   bloodGroup: user?.profile?.bloodGroup || "A+", // Initialize with default value
-    // },
+    defaultValues: {
+      name: user?.name || "",
+      bio: user?.profile?.bio || "",
+      profileImg: user?.profile?.profileImg || selectedImage,
+    },
   });
 
   const formIsLoading = form.formState.isSubmitting;
@@ -59,19 +57,18 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (values: any) => {
     values["profileImg"] = selectedImage;
     try {
-      const res = await postData(
-        "me",
+      const res: { success: boolean } = await postData(
+        "users/me",
         values,
-        session?.backendTokens?.accessToken!,
-        "PATCH"
+        "PATCH",
+        session?.backendTokens?.accessToken!
       );
-      console.log(res);
-      // if (res) {
-      //   router.push(`${urlPath}`);
-      //   toast({
-      //     title: "Profile Updated Successfully",
-      //   });
-      // }
+      if (res.success) {
+        router.push(`${urlPath}`);
+        toast({
+          title: "Profile Updated Successfully",
+        });
+      }
     } catch (error: any) {
       toast({
         title: error.message,

@@ -1,43 +1,46 @@
-"use client";
-
 import { Repeat } from "lucide-react";
 
-import Loading from "@/app/loading";
 import { DataTable } from "@/components/data-table";
 import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
-import { useServicesQuery } from "@/redux/api/serviceApi";
-import { useDebounce } from "@/redux/hooks";
 import Link from "next/link";
-import { useState } from "react";
 import { columns } from "./columns";
+const data = [
+  {
+    name: "Order 1",
+    status: "Pending",
+    time: "10:00 AM",
+    date: "2023-11-01",
+    image:
+      "https://www.pinclipart.com/picdir/big/366-3661806_supermarket-shop-svg-png-icon-free-download-supermarkets.png",
+  },
+  {
+    name: "Order 2",
+    status: "Shipped",
+    time: "02:30 PM",
+    date: "2023-11-02",
+    image:
+      "https://www.pinclipart.com/picdir/big/366-3661806_supermarket-shop-svg-png-icon-free-download-supermarkets.png",
+  },
+  {
+    name: "Order 3",
+    status: "Delivered",
+    time: "09:15 AM",
+    date: "2023-11-03",
+    image:
+      "https://www.pinclipart.com/picdir/big/366-3661806_supermarket-shop-svg-png-icon-free-download-supermarkets.png",
+  },
+  {
+    name: "Order 4",
+    status: "Pending",
+    time: "11:45 AM",
+    date: "2023-11-04",
+    image:
+      "https://www.pinclipart.com/picdir/big/366-3661806_supermarket-shop-svg-png-icon-free-download-supermarkets.png",
+  },
+];
 
 const ServiceListPage = () => {
-  const [size, setSize] = useState<number>(10);
-  const [page, setPage] = useState<number>(1);
-  const [sortBy, setSortBy] = useState<string>("");
-  const [sortOrder, setSortOrder] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const query: Record<string, any> = {};
-
-  query["limit"] = size;
-  query["page"] = page;
-  query["sortBy"] = sortBy;
-  query["sortOrder"] = sortOrder;
-
-  const debouncedTerm = useDebounce({
-    searchQuery: searchTerm,
-    delay: 600,
-  });
-
-  if (!!debouncedTerm) {
-    query["searchTerm"] = debouncedTerm;
-  }
-
-  const { data, isLoading } = useServicesQuery({ ...query });
-  if (isLoading) {
-    return <Loading />;
-  }
   return (
     <div className="w-11/12 mx-auto">
       <Heading
@@ -60,7 +63,7 @@ const ServiceListPage = () => {
           </Link>
         </div>
       </div>
-      <DataTable columns={columns} data={(data && data.services) || []} />
+      <DataTable columns={columns} data={data || []} />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { ShowMeToast } from "@/components/error";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
 import { NextAuthOptions } from "next-auth";
@@ -7,14 +8,15 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 //RefreshToken
 async function refreshToken(token: JWT): Promise<JWT> {
-  const res = await fetch(`${Backend_URL}/auth/token/refresh`, {
+  const res = await fetch(`${Backend_URL}/auth/refresh-token`, {
     method: "POST",
     headers: {
       authorization: token.backendTokens.refreshToken,
     },
   });
+  console.log(token.backendTokens.refreshToken);
   const response = await res.json();
-
+  console.log("response", response.data);
   return {
     ...token,
     data: response,
@@ -31,14 +33,15 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: "Email",
           type: "text",
-          placeholder: "jsmith",
+          placeholder: "your_email@mail.com",
         },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw Error("Email Or Password not Match");
+        }
         const { email, password } = credentials;
-
         const res = await fetch(`${Backend_URL}/auth/sign-in`, {
           method: "POST",
           body: JSON.stringify({
@@ -50,10 +53,16 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (res.status == 401) {
+          toast({
+            title: res.statusText,
+          });
           console.log(res.statusText);
-          return null;
+          throw Error("Email Or Password not Match");
         }
         const user = await res.json();
+        if (!user.data.user.isEmailVerified) {
+          throw Error("Email is not verified. Please verify your email.");
+        }
         return user.data;
       },
     }),
@@ -63,7 +72,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) return { ...token, ...user };
       if (new Date().getTime() < token.backendTokens.expiresIn) return token;
-
+      console.log(new Date().getTime() < token.backendTokens.expiresIn);
       return await refreshToken(token);
     },
 

@@ -9,21 +9,20 @@ export function cn(...inputs: ClassValue[]) {
 export async function postData<T>(
   url: string,
   data: Record<string, any>,
-  token: string,
-  method: "PATCH" | "POST" | "DELETE" | "PUT"
+  method: "PATCH" | "POST" | "DELETE" | "PUT",
+  token?: string
 ): Promise<T> {
   try {
-    const response = await fetch(`${Backend_URL}/users/${url}`, {
+    const response = await fetch(`${Backend_URL}/${url}`, {
       method,
       headers: {
-        "Content-Type": "application/json", // Adjust the content type as needed
+        "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      // Handle non-successful responses here (e.g., check for status code and throw an error)
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -35,18 +34,14 @@ export async function postData<T>(
     throw error; // Rethrow the error for further handling or logging
   }
 }
-export async function getData<T>(
-  url: string,
-  token: string,
-  method: "GET"
-): Promise<T> {
+export async function getData<T>(id: string, token: string): Promise<T> {
   try {
-    const response = await fetch(`${Backend_URL}/users/${url}/`, {
-      method,
+    const response = await fetch(`${Backend_URL}/users/${id}/`, {
       headers: {
         "Content-Type": "application/json", // Adjust the content type as needed
         authorization: `Bearer ${token}`,
       },
+      next: { tags: ["profile"] },
     });
 
     if (!response.ok) {
@@ -55,7 +50,6 @@ export async function getData<T>(
     }
 
     const responseData: T = await response.json(); // Parse the response JSON
-    console.log("responseData from get utils", responseData);
     return responseData; // Return the parsed data
   } catch (error) {
     console.error("Error:", error);

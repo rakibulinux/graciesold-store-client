@@ -53,7 +53,7 @@ export const Editor = ({ onChange, value, defaultValue }: EditorProps) => {
         onChange={onChange}
         modules={modules}
         formats={formats}
-        className="h-72"
+        className="h-full"
         defaultValue={defaultValue}
       />
     </div>

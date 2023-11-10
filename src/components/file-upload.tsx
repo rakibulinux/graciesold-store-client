@@ -15,6 +15,10 @@ export const FileUpload = ({ onChange, endpoint }: FileUploadProps) => {
       endpoint={endpoint}
       onClientUploadComplete={(res) => {
         onChange(res?.[0].url);
+        toast({
+          title: "Image Upload Successfully",
+          variant: "success",
+        });
       }}
       onUploadError={(error: Error) => {
         toast({

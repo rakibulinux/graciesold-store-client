@@ -48,7 +48,8 @@ const SignUp = () => {
       });
       if (res?.ok) {
         toast({
-          title: "SignUp Successfully",
+          title: "SignUp Successfully! Please Confirm Your Email",
+          description: `Your account is registered successfully. Please check your email ${data.email} to verify your account.`,
           variant: "success",
         });
         router.push("/sign-in");

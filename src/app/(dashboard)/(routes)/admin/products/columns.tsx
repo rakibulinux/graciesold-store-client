@@ -6,8 +6,6 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { AlertDialogModal } from "@/components/alart-dialog";
-import { Preview } from "@/components/preview";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,12 +14,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UseDeleteServiceMutation } from "@/redux/api/serviceApi";
-import { IService } from "@/types";
+
 import Image from "next/image";
 import Link from "next/link";
+import { Preview } from "@/components/quil/preview";
 
-export const columns: ColumnDef<IService>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "image",
     header: "Image",
@@ -80,7 +78,6 @@ export const columns: ColumnDef<IService>[] = [
     id: "actions",
     cell: ({ row }) => {
       const service = row.original;
-      const [deleteService] = UseDeleteServiceMutation();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -96,20 +93,20 @@ export const columns: ColumnDef<IService>[] = [
             >
               Copy Service ID
             </DropdownMenuItem>
-            <Link href={`/admin/services/edit/${service.id}`}>
+            <Link href={`/admin/products/edit/${service.id}`}>
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
-            <Link href={`/admin/services/details/${service.id}`}>
+            <Link href={`/admin/products/details/${service.id}`}>
               <DropdownMenuItem>Details</DropdownMenuItem>
             </Link>
             {/* <DropdownMenuItem> */}
             {/* <DialogCloseButton
                 handleDelete={() => deleteService(service.id)}
               /> */}
-            <AlertDialogModal
+            {/* <AlertDialogModal
               title="Delete"
               handleDelete={() => deleteService(service.id)}
-            />
+            /> */}
             {/* </DropdownMenuItem> */}
             <DropdownMenuSeparator />
 
