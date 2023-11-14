@@ -2,7 +2,7 @@
 
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { toast } from "./ui/use-toast";
+import { useToast } from "./ui/use-toast";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -10,6 +10,7 @@ interface FileUploadProps {
 }
 
 export const FileUpload = ({ onChange, endpoint }: FileUploadProps) => {
+  const { toast } = useToast();
   return (
     <UploadDropzone
       endpoint={endpoint}

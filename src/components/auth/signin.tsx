@@ -1,6 +1,5 @@
 "use client";
 import loginImage from "@/assets/login.svg";
-import { loginSchema } from "@/schema/login";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
@@ -12,6 +11,7 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
 import { signIn } from "next-auth/react";
 import { useToast } from "../ui/use-toast";
+import { loginSchema } from "@/schema/authSchema";
 
 type FormValues = {
   email: string;
@@ -65,7 +65,7 @@ const SignIn = () => {
     }
   };
   return (
-    <section className="relative flex flex-wrap lg:h-screen lg:items-center">
+    <section className="relative flex flex-wrap min-h-screen lg:items-center">
       <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
         <div className="text-white mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-bold sm:text-3xl">Welcome Back!</h1>
@@ -85,9 +85,9 @@ const SignIn = () => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="Email"
+                        placeholder=" Email"
                         {...field}
                         type="email"
                       />
@@ -101,9 +101,9 @@ const SignIn = () => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="Password"
+                        placeholder=" Password"
                         {...field}
                         type="password"
                       />
@@ -125,6 +125,9 @@ const SignIn = () => {
                   Sign Up
                 </Link>
               </p>
+              <Link className="underline ml-2" href="/forgot-password">
+                Forgot Password?
+              </Link>
             </form>
           </Form>
         </div>

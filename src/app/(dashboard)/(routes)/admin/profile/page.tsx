@@ -8,7 +8,11 @@ import { IUser } from "@/interface/userProfile";
 
 const ProfilePage = async () => {
   const session = await getServerAuthSession();
-  const data: IUser = await getData("me", session?.backendTokens?.accessToken!);
+
+  const data: IUser = await getData(
+    "users/me",
+    session?.backendTokens?.accessToken!
+  );
   return (
     <div>
       <Heading

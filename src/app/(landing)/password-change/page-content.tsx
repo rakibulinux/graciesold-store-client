@@ -1,142 +1,180 @@
-// "use client";
-// import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
-// import { useForm, FormProvider, useFormState } from "react-hook-form";
-// import { useAuthResetPasswordService } from "@/services/api/services/auth";
-// import * as yup from "yup";
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import { useSnackbar } from "notistack";
-// import { useRouter } from "next/navigation";
-// import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-// import { useTranslation } from "@/services/i18n/client";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
+"use client";
+import PasswordStrength from "@/components/auth/PasswordStrength";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { Backend_URL } from "@/lib/Constants";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Check } from "lucide-react";
+import { passwordStrength } from "check-password-strength";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import TogglePassword from "@/components/auth/TogglePassword";
 
-// type PasswordChangeFormData = {
-//   password: string;
-//   passwordConfirmation: string;
-// };
+const FormSchema = z
+  .object({
+    password: z
+      .string()
+      .min(6, "Password must be atleast 6 characters.")
+      .max(52, "Password must be less than 52 characters."),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password doesn't match",
+    path: ["confirmPassword"],
+  });
+type InputType = z.infer<typeof FormSchema>;
+type FormValues = {
+  password: string;
+  confirmPassword: string;
+};
+type CardProps = React.ComponentProps<typeof Card>;
 
-// const useValidationSchema = () => {
-//   const { t } = useTranslation("password-change");
+const ChangePassword = ({ className, ...props }: CardProps) => {
+  const [showPass, setShowPass] = useState<boolean>(false);
+  const [passStrength, setPassStrength] = useState<number>(0);
+  const { toast } = useToast();
+  const router = useRouter();
+  const params = new URLSearchParams(window?.location?.search);
+  const hash = params.get("hash");
+  const form = useForm<InputType>({
+    resolver: zodResolver(FormSchema),
+  });
+  const {
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = form;
+  const isLoading = form.formState.isSubmitting;
+  useEffect(() => {
+    setPassStrength(
+      passwordStrength(watch().password ? watch().password : "").id
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch().password]);
 
-//   return yup.object().shape({
-//     password: yup
-//       .string()
-//       .min(6, t("password-change:inputs.password.validation.min"))
-//       .required(t("password-change:inputs.password.validation.required")),
-//     passwordConfirmation: yup
-//       .string()
-//       .oneOf(
-//         [yup.ref("password")],
-//         t("password-change:inputs.passwordConfirmation.validation.match")
-//       )
-//       .required(
-//         t("password-change:inputs.passwordConfirmation.validation.required")
-//       ),
-//   });
-// };
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const res = await fetch(`${Backend_URL}/auth/reset-password`, {
+        method: "POST",
+        body: JSON.stringify({
+          hash,
+          password: data.password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res);
+      if (res?.ok) {
+        toast({
+          title: "Reset successfully",
+          description: `Your Password Has Been Rest successfully!`,
+          variant: "success",
+        });
+        // router.push("/sign-in");
+      }
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+  return (
+    <Card className={cn("w-[380px] mx-auto my-20 py-14", className)} {...props}>
+      <CardHeader>
+        <CardTitle>Change Password</CardTitle>
+        <CardDescription>
+          We will send a password rest link in your email.
+        </CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="
+              mx-auto mb-0 mt-8 max-w-md space-y-4
+              "
+        >
+          <CardContent className="grid gap-4">
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-10">
+                  <FormControl className="m-0 p-0">
+                    <Input
+                      label="Password"
+                      error={errors.password?.message}
+                      type={showPass ? "text" : "password"}
+                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      disabled={isLoading}
+                      placeholder="Password"
+                      {...field}
+                    >
+                      <TogglePassword
+                        className="absolute right-6 top-9"
+                        setValue={setShowPass}
+                        value={showPass}
+                      />
+                    </Input>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-10">
+                  <FormControl className="m-0 p-0">
+                    <Input
+                      label="Confirm Password"
+                      error={errors.confirmPassword?.message}
+                      type={showPass ? "text" : "password"}
+                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      disabled={isLoading}
+                      placeholder="Confirm Password"
+                      {...field}
+                    >
+                      <TogglePassword
+                        className="absolute right-6 top-9"
+                        setValue={setShowPass}
+                        value={showPass}
+                      />
+                    </Input>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <PasswordStrength passStrength={passStrength} />
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              <Check className="mr-2 h-4 w-4" /> Set new password
+            </Button>
+          </CardFooter>
+          <p className="text-sm text-center text-gray-500">
+            Already have an account?
+            <Link className="underline ml-2" href="/sign-in">
+              Sign In
+            </Link>
+          </p>
+        </form>
+      </Form>
+    </Card>
+  );
+};
 
-// function FormActions() {
-//   const { t } = useTranslation("password-change");
-//   const { isSubmitting } = useFormState();
-
-//   return (
-//     <Button
-//       variant="secondary"
-//       color="primary"
-//       type="submit"
-//       disabled={isSubmitting}
-//     >
-//       {t("password-change:actions.submit")}
-//     </Button>
-//   );
-// }
-
-// function Form() {
-//   const { enqueueSnackbar } = useSnackbar();
-//   const fetchAuthResetPassword = useAuthResetPasswordService();
-//   const { t } = useTranslation("password-change");
-//   const validationSchema = useValidationSchema();
-//   const router = useRouter();
-
-//   const methods = useForm<PasswordChangeFormData>({
-//     resolver: yupResolver(validationSchema),
-//     defaultValues: {
-//       password: "",
-//     },
-//   });
-
-//   const { handleSubmit, setError } = methods;
-
-//   const onSubmit = async (formData: PasswordChangeFormData) => {
-//     const params = new URLSearchParams(window.location.search);
-//     const hash = params.get("hash");
-//     if (!hash) return;
-
-//     const { data, status } = await fetchAuthResetPassword({
-//       password: formData.password,
-//       hash,
-//     });
-
-//     if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-//       (Object.keys(data.errors) as Array<keyof PasswordChangeFormData>).forEach(
-//         (key) => {
-//           setError(key, {
-//             type: "manual",
-//             message: t(
-//               `password-change:inputs.${key}.validation.server.${data.errors[key]}`
-//             ),
-//           });
-//         }
-//       );
-
-//       return;
-//     }
-
-//     if (status === HTTP_CODES_ENUM.NO_CONTENT) {
-//       enqueueSnackbar(t("password-change:alerts.success"), {
-//         variant: "success",
-//       });
-
-//       router.replace("/sign-in");
-//     }
-//   };
-
-//   return (
-//     <FormProvider {...methods}>
-//       <div>
-//         <form onSubmit={handleSubmit(onSubmit)}>
-//           <div>
-//             <div>
-//               <h1>{t("password-change:title")}</h1>
-//             </div>
-//             <div>
-//               <Input
-//                 name="password"
-//                 // label={t("password-change:inputs.password.label")}
-//                 type="password"
-//               />
-//             </div>
-//             <div>
-//               <Input
-//                 name="passwordConfirmation"
-//                 // label={t("password-change:inputs.passwordConfirmation.label")}
-//                 type="password"
-//               />
-//             </div>
-
-//             <div>
-//               <FormActions />
-//             </div>
-//           </div>
-//         </form>
-//       </div>
-//     </FormProvider>
-//   );
-// }
-
-// function PasswordChange() {
-//   return <Form />;
-// }
-
-// export default withPageRequiredGuest(PasswordChange);
+export default ChangePassword;

@@ -1,84 +1,119 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
-import { postData } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { Backend_URL } from "@/lib/Constants";
+import { cn } from "@/lib/utils";
+import { forgotPasswordSchema } from "@/schema/authSchema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Check } from "lucide-react";
 
-import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
   email: z.string().email("Please enter a valid email adress."),
 });
+type FormValues = {
+  email: string;
+};
+type CardProps = React.ComponentProps<typeof Card>;
+const ForgotPasswordPage = ({ className, ...props }: CardProps) => {
+  const { toast } = useToast();
+  const router = useRouter();
 
-type InputType = z.infer<typeof FormSchema>;
-const ForgotPasswordPage = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<InputType>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<FormValues>({
+    resolver: yupResolver(forgotPasswordSchema),
   });
-  const [submitting, setSubmitting] = useState(false);
 
-  const submit: SubmitHandler<InputType> = async (data) => {
-    setSubmitting(true);
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const result = await postData("auth/forgot-password", data, "POST");
-      if (result)
+      const res = await fetch(`${Backend_URL}/auth/forgot-password`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: data.email,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res?.ok) {
         toast({
-          title: "Successful",
-          description: "Reset password link is sent to your email!",
+          title: "Reset Link Send In Youe Email Successfully!",
+          description: `Please check your email ${data.email} to rest your password.`,
           variant: "success",
         });
-      reset();
-    } catch (error) {
+        router.push("/");
+      }
+    } catch (error: any) {
       toast({
-        title: "Oops!",
-        description: "Somthing went wrong!",
+        title: error.message,
         variant: "destructive",
       });
-      console.error(error);
     }
-    setSubmitting(false);
   };
   return (
-    <div className=" grid grid-cols-1 md:grid-cols-3 justify-center items-center p-2">
-      <form onSubmit={handleSubmit(submit)}>
-        <Input
-          {...register("email")}
-          label="Email"
-
-          // error={errors.email?.message}
-        ></Input>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <span>Please Wait</span>
-            </>
-          ) : (
-            "Submit"
-          )}
-        </Button>
-      </form>
-      <div className="flex justify-center">
-        <Image
-          alt="Login"
-          src={"/forgotPass.jpg"}
-          width={500}
-          height={500}
-          className="  w-32 md:w-96 col-span-2 "
-        />
-      </div>
-    </div>
+    <Card className={cn("w-[380px] mx-auto my-10 py-6", className)} {...props}>
+      <CardHeader className="text-center">
+        <CardTitle>Forgot Password</CardTitle>
+        <CardDescription>
+          We will send a password rest link in your email.
+        </CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="
+              mx-auto mb-0 mt-8 max-w-md space-y-4
+              "
+        >
+          <CardContent className="grid gap-4">
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-10">
+                  <FormControl className="m-0 p-0">
+                    <Input
+                      error={form.formState.errors.email?.message}
+                      label="Email"
+                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      disabled={isLoading}
+                      placeholder="Email"
+                      {...field}
+                      type="email"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              Send Reset Link
+            </Button>
+          </CardFooter>
+          <p className="text-sm text-center text-gray-500">
+            Do You Remember Your Password?
+            <Link className="underline ml-2" href="/sign-in">
+              Sign In
+            </Link>
+          </p>
+        </form>
+      </Form>
+    </Card>
   );
 };
 

@@ -1,12 +1,16 @@
-import CreateService from "@/components/service/create-service";
+import { MenuType } from "@/types/types";
+import { getAllData } from "@/lib/utils";
+import CreateProduct from "./product-page";
 
-export default function Page() {
+export default async function Page() {
+  const category: MenuType = await getAllData("category");
+
   return (
     <>
-      <div className="text-gray-900 mx-auto max-w-lg text-center mb-10">
-        <h1 className="text-2xl font-bold sm:text-3xl">Create a Service</h1>
+      <div className="mx-auto max-w-lg text-center mb-10">
+        <h1 className="text-2xl font-bold sm:text-3xl">Add Product</h1>
       </div>
-      <CreateService />
+      <CreateProduct category={category} />
     </>
   );
 }

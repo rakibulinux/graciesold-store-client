@@ -6,7 +6,7 @@ import { getData } from "@/lib/utils";
 const UpdateProfilePage = async () => {
   const session = await getServerAuthSession();
   const { data }: User = await getData(
-    "me",
+    "users/me",
     session?.backendTokens.accessToken!
   );
   return (

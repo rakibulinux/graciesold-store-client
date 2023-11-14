@@ -8,26 +8,27 @@ import logo from "@/assets/icons/logo.png";
 import { useSession } from "next-auth/react";
 import { ModeToggle } from "../mode-toggle";
 import { DropdownMenuItems } from "../dropdown-menu";
+import CartIcon from "../product/CartIcon";
+import { IUser } from "@/interface/userProfile";
 const navItems = [
   { name: "HOME", url: "/" },
   { name: "MENU", url: "/menu" },
   { name: "CONTACT", url: "/contact" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ data }: IUser) => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  const [open, setOpen] = useState(false);
   return (
-    <header className="w-full bg-black-150">
-      <nav className="container mx-auto flex items-center justify-between p-4 md:p-6 relative">
-        <Link href="/" className="flex items-center gap-2">
+    <header className="top-0 sticky py-4 px-5 lg:px-10 flex justify-between items-center z-20 w-full bg-black-150">
+      <nav className="container flex items-center justify-between relative">
+        <Link href="/" className="flex items-center gap-2 ml-24 md:ml-0">
           <Image src={logo} width={70} height={70} alt="logo" />
         </Link>
-
         {/* Mobile Menu Toggle Button */}
         <button
           className="md:hidden text-white focus:outline-none"
@@ -61,19 +62,30 @@ const Navbar = () => {
                 CALL TO ORDER
               </Link>
             </li>
+            <li>
+              <Link href="/cart" onClick={() => setOpen(false)}>
+                <CartIcon />
+              </Link>
+            </li>
             <div className="flex">
-              <Link
-                className="rounded-md bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow"
-                href="/sign-in"
-              >
-                Login
-              </Link>
-              <Link
-                className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-sky-600 ml-4"
-                href="/sign-up"
-              >
-                Register
-              </Link>
+              {session ? (
+                <DropdownMenuItems data={data} />
+              ) : (
+                <>
+                  <Link
+                    className="rounded-md bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow"
+                    href="/sign-in"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-sky-600 ml-4"
+                    href="/sign-up"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -95,12 +107,16 @@ const Navbar = () => {
               CALL TO ORDER
             </Link>
           </li>
-
+          <li className="list-none">
+            <Link href="/cart" onClick={() => setOpen(false)}>
+              <CartIcon />
+            </Link>
+          </li>
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
               <div className="hidden sm:flex">
                 {session ? (
-                  <DropdownMenuItems />
+                  <DropdownMenuItems data={data} />
                 ) : (
                   <>
                     <Link

@@ -1,13 +1,12 @@
 "use client";
-import defaultProfileImg from "@/assets/profile_img.png";
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { UserRole } from "@/interface/userProfile";
+import { UserProfile, UserRole } from "@/interface/userProfile";
 import { Preview } from "../quil/preview";
 
-interface UserProfile {
+interface IUserProfile {
   user: {
     id: string;
     email: string;
@@ -15,13 +14,13 @@ interface UserProfile {
     password: string;
     role: UserRole;
     createdAt: Date;
-    prfile: UserProfile;
+    profile: UserProfile;
     updatedAt: Date;
     isEmailVerified: boolean;
   };
 }
 
-const Profile = ({ user }: any) => {
+const Profile = ({ user }: IUserProfile) => {
   const { data: session } = useSession();
   return (
     <div className="px-6 w-11/12 mx-auto">
@@ -31,7 +30,7 @@ const Profile = ({ user }: any) => {
             src={
               user?.profile?.profileImg
                 ? user?.profile?.profileImg
-                : defaultProfileImg
+                : "/my-bg2.png"
             }
             alt="My Profile Image"
             width={100}

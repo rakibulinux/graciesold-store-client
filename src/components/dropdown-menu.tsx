@@ -13,24 +13,22 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import { Backend_URL } from "@/lib/Constants";
+import { IUser } from "@/interface/userProfile";
 
-export function DropdownMenuItems() {
+export function DropdownMenuItems({ data }: IUser) {
   const { data: session } = useSession();
   const signOutUser = async () => {
     const response = await fetch(`${Backend_URL}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${session?.backendTokens.accessToken}`,
+        authorization: `Bearer ${session?.backendTokens?.accessToken}`,
       },
     });
-    console.log(response);
+    console.log("response", response);
     signOut();
-    if (response.ok) {
-    }
   };
-  console.log(session);
-  const profilePic = session?.user?.profile?.profileImg;
+  const profilePic = data?.profile?.profileImg;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -53,9 +51,7 @@ export function DropdownMenuItems() {
         <DropdownMenuItem>
           <Link href={`/${session?.user?.role}/settings`}>Settings</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOutUser()}>
-          SignOut
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={signOutUser}>SignOut</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

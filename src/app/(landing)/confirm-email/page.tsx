@@ -1,15 +1,12 @@
-// import type { Metadata } from "next";
-// import ConfirmEmail from "./page-content";
+import React from "react";
+import { ConfirmEmailContent } from "./page-content";
 
-// type Props = {
-//   params: { language: string };
-// };
+const page = () => {
+  return (
+    <div>
+      <ConfirmEmailContent />
+    </div>
+  );
+};
 
-// export async function generateMetadata({ params }: Props): Promise<Metadata> {
-
-//   return {
-//     title: t("title"),
-//   };
-// }
-
-// export default ConfirmEmail;
+export default page;

@@ -8,7 +8,10 @@ import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
 
 const ProfilePage = async () => {
   const session = await getServerAuthSession();
-  const data: IUser = await getData("me", session?.backendTokens?.accessToken!);
+  const data: IUser = await getData(
+    "users/me",
+    session?.backendTokens?.accessToken!
+  );
   return (
     <div>
       <Heading

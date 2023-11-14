@@ -6,19 +6,19 @@ const f = createUploadthing();
 const handleAuth = async () => {
   const session = await getServerAuthSession();
   const userId = session?.user.id;
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error("You Are unauthorized to upload images");
   return { userId };
 };
 
 export const ourFileRouter = {
-  serviceImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+  productImage: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
     .middleware(() => handleAuth())
     .onUploadComplete(() => {}),
-  // serviceAttachment: f(["text", "image", "video", "audio", "pdf"])
-  serviceAttachment: f(["image"])
+  // profileAttachment: f(["text", "image", "video", "audio", "pdf"])
+  profileAttachment: f(["image"])
     .middleware(() => handleAuth())
     .onUploadComplete(() => {}),
-  chapterVideo: f({ video: { maxFileCount: 1, maxFileSize: "512GB" } })
+  chapterVideo: f({ video: { maxFileCount: 1, maxFileSize: "32MB" } })
     .middleware(() => handleAuth())
     .onUploadComplete(() => {}),
 } satisfies FileRouter;

@@ -14,12 +14,12 @@ async function refreshToken(token: JWT): Promise<JWT> {
       authorization: token.backendTokens.refreshToken,
     },
   });
-  console.log(token.backendTokens.refreshToken);
+  console.log("Refreshed");
   const response = await res.json();
-  console.log("response", response.data);
+  const data = response.data.backendTokens;
   return {
     ...token,
-    data: response,
+    backendTokens: data,
   };
 }
 
@@ -70,17 +70,28 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
+      let isRefreshing = false;
       if (user) return { ...token, ...user };
+
       if (new Date().getTime() < token.backendTokens.expiresIn) return token;
+
       console.log(new Date().getTime() < token.backendTokens.expiresIn);
-      return await refreshToken(token);
+
+      isRefreshing = true;
+      try {
+        const refreshedToken = await refreshToken(token);
+        return refreshedToken;
+      } finally {
+        console.log("i finally");
+        isRefreshing = false;
+      }
     },
 
     async session({ token, session, user }) {
       session.user = token.user;
       session.backendTokens = token.backendTokens;
 
-      return session;
+      return { ...session, ...token };
     },
   },
   pages: {

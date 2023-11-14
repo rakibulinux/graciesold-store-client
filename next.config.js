@@ -12,6 +12,7 @@ const nextConfig = {
       "utfs.io",
       "www.europeanbusinessreview.com",
       "www.pinclipart.com",
+      "localhost",
     ],
   },
 };

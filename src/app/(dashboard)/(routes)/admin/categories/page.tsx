@@ -5,6 +5,10 @@ import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { columns } from "./columns";
+import { Backend_URL } from "@/lib/Constants";
+import { MenuType } from "@/types/types";
+import { getAllData } from "@/lib/utils";
+import { revalidateTag } from "next/cache";
 
 const data = [
   {
@@ -25,7 +29,9 @@ const data = [
   },
 ];
 
-const CategoryListPage = () => {
+const CategoryListPage = async () => {
+  const category: MenuType = await getAllData("category");
+  revalidateTag("collection");
   return (
     <div className="w-11/12 mx-auto">
       <Heading
@@ -48,7 +54,7 @@ const CategoryListPage = () => {
           </Link>
         </div>
       </div>
-      <DataTable columns={columns} data={data || []} />
+      <DataTable columns={columns} data={category || []} />
     </div>
   );
 };

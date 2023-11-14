@@ -1,5 +1,9 @@
-import UpdateService from "@/components/service/update-service";
+import { getAllData, getSingleData } from "@/lib/utils";
+import { MenuType } from "@/types/types";
+import UpdateProduct from "./update-page";
 
-export default function Page({ params }: any) {
-  return <UpdateService params={params} />;
+export default async function Page({ params }: any) {
+  const category: MenuType = await getAllData("category");
+  const product: MenuType = await getSingleData("product", params.id);
+  return <UpdateProduct category={category} product={product} />;
 }

@@ -18,17 +18,24 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Preview } from "@/components/quil/preview";
+import { ProductType } from "@/types/types";
+import { AlertDialogModal } from "@/components/alart-dialog";
+import { useSession } from "next-auth/react";
+import { deleteData } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
+import { Backend_URL } from "@/lib/Constants";
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<ProductType>[] = [
   {
     accessorKey: "image",
     header: "Image",
     cell: ({ row }) => {
-      const service = row.original;
+      const product = row.original;
+      console.log(product);
       return (
         <Image
-          src={service.image} // Make sure "image" is a valid path to your image
-          alt={service.name} // Use the appropriate alt text
+          src={Backend_URL + product.images[0].path} // Make sure "image" is a valid path to your image
+          alt={product.name} // Use the appropriate alt text
           width={100} // Customize the width of the image
           height={100} // Customize the height of the image
         />
@@ -59,7 +66,17 @@ export const columns: ColumnDef<any>[] = [
 
   {
     accessorKey: "price",
-    header: "Price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "availability",
@@ -77,7 +94,22 @@ export const columns: ColumnDef<any>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const service = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { data: session } = useSession();
+      const product = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { toast } = useToast();
+      const deleteProduct = async (id: string) => {
+        const res = await deleteData(
+          "product",
+          product.id,
+          session?.backendTokens?.accessToken!
+        );
+        console.log(res);
+        if (res) {
+          toast({ title: `Product Deleted Successfully! ${product.name}` });
+        }
+      };
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -89,28 +121,23 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(service.id)}
+              onClick={() => navigator.clipboard.writeText(product.id)}
             >
-              Copy Service ID
+              Copy product ID
             </DropdownMenuItem>
-            <Link href={`/admin/products/edit/${service.id}`}>
+            <Link href={`/admin/products/edit/${product.id}`}>
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
-            <Link href={`/admin/products/details/${service.id}`}>
+            <Link href={`/admin/products/details/${product.id}`}>
               <DropdownMenuItem>Details</DropdownMenuItem>
             </Link>
-            {/* <DropdownMenuItem> */}
-            {/* <DialogCloseButton
-                handleDelete={() => deleteService(service.id)}
-              /> */}
-            {/* <AlertDialogModal
+            <AlertDialogModal
               title="Delete"
-              handleDelete={() => deleteService(service.id)}
-            /> */}
-            {/* </DropdownMenuItem> */}
+              handleDelete={() => deleteProduct(product.id)}
+            />
             <DropdownMenuSeparator />
 
-            {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
+            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -56,6 +56,16 @@ export const availabilityOptions = [
     value: "Upcoming",
   },
 ];
+export const isFeaturedProduct = [
+  {
+    label: "True",
+    value: "true",
+  },
+  {
+    label: "False",
+    value: "false",
+  },
+];
 
 export const months = [
   "January",

@@ -13,10 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ICategory } from "@/types";
-import Link from "next/link";
 
-export const columns: ColumnDef<ICategory>[] = [
+import Link from "next/link";
+import { CategoryType } from "@/types/types";
+
+export const columns: ColumnDef<CategoryType>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {

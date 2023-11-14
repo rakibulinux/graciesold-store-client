@@ -1,17 +1,12 @@
-// import type { Metadata } from "next";
-// import PasswordChange from "./page-content";
-// import { getServerTranslation } from "@/services/i18n";
+import React from "react";
+import ChangePassword from "./page-content";
 
-// type Props = {
-//   params: { language: string };
-// };
+const page = () => {
+  return (
+    <div>
+      <ChangePassword />
+    </div>
+  );
+};
 
-// export async function generateMetadata({ params }: Props): Promise<Metadata> {
-//   const { t } = await getServerTranslation(params.language, "password-change");
-
-//   return {
-//     title: t("title"),
-//   };
-// }
-
-// export default PasswordChange;
+export default page;

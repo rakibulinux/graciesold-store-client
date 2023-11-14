@@ -23,8 +23,9 @@ export type IUser = {
     password: string;
     role: UserRole;
     createdAt: Date;
-    prfile: UserProfile;
+    profile: UserProfile;
     updatedAt: Date;
     isEmailVerified: boolean;
+    hash?: string;
   };
 };

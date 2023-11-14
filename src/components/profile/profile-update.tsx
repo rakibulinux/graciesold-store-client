@@ -18,7 +18,7 @@ import { Button } from "./../ui/button";
 import { Editor } from "../quil/editor";
 import { toast } from "../ui/use-toast";
 import { useSession } from "next-auth/react";
-import { postData } from "@/lib/utils";
+import { patchPutData, postData } from "@/lib/utils";
 
 type FormValues = {
   address: string;
@@ -57,8 +57,9 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (values: any) => {
     values["profileImg"] = selectedImage;
     try {
-      const res: { success: boolean } = await postData(
-        "users/me",
+      const res: { success: boolean } = await patchPutData(
+        "users",
+        "me",
         values,
         "PATCH",
         session?.backendTokens?.accessToken!
@@ -79,7 +80,7 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   return (
     <section className="flex items-center justify-center">
       <div className="w-full ">
-        <div className="text-gray-900 mx-auto max-w-lg text-center">
+        <div className="mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-bold sm:text-3xl">
             Update Your Profile
           </h1>
@@ -146,7 +147,7 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
                   />
                 ) : (
                   <FileUpload
-                    endpoint="serviceAttachment"
+                    endpoint="profileAttachment"
                     onChange={(url) => {
                       if (url) {
                         onImageUpload({ profileImg: url });
