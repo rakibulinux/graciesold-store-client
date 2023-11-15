@@ -38,7 +38,7 @@ type FormValues = {
 const UpdateProduct = ({ product }: any) => {
   const { data: session } = useSession();
   const { toast } = useToast();
-  console.log(product);
+  //console.log(product);
   const [selectedAvailability, setSelectedAvailability] = useState<
     "Available" | "Upcoming"
   >("Available");
@@ -83,7 +83,7 @@ const UpdateProduct = ({ product }: any) => {
       toast({ title: error.message });
     }
   };
-  console.log(product.isFeatured, product.availability);
+  //console.log(product.isFeatured, product.availability);
   return (
     <div className="w-11/12 mx-auto">
       <Form {...form}>

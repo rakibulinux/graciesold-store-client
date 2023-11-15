@@ -1,7 +1,15 @@
+export type savedFile = {
+  id: string;
+  path: string;
+};
+
 export type MenuType = {
   id: string;
   name: string;
   slug: string;
+  color?: string;
+  description?: string;
+  img?: savedFile[];
   createdAt: Date;
   updatedAt: Date;
 }[];
@@ -9,14 +17,13 @@ export type CategoryType = {
   id: string;
   name: string;
   slug: string;
-  img?: string;
+  color?: string;
+  description?: string;
+  img?: savedFile[];
   createdAt: Date;
   updatedAt: Date;
 };
-export type savedFile = {
-  id: string;
-  path: string;
-};
+
 export type SelectOptions = {
   label: string;
   value: string;
@@ -30,6 +37,9 @@ export type Forgot = {
 };
 
 export type ProductType = {
+  map(
+    arg0: (item: any) => import("react").JSX.Element
+  ): import("react").ReactNode;
   id: string;
   name: string;
   description: string;
@@ -72,4 +82,5 @@ export type CartType = {
 export type ActionTypes = {
   addToCart: (item: CartItemType) => void;
   removeFromCart: (item: CartItemType) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
 };

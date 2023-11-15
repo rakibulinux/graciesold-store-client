@@ -50,6 +50,30 @@ export const useCartStore = create(
           totalPrice: state.totalPrice - item.price,
         }));
       },
+      updateQuantity(productId: string, quantity: number) {
+        const products = get().products;
+        const updatedProducts = products.map((product) =>
+          product.id === productId
+            ? {
+                ...product,
+                quantity,
+                price: product.price * quantity,
+              }
+            : product
+        );
+        set((state) => ({
+          ...state,
+          products: updatedProducts,
+          totalItems: updatedProducts.reduce(
+            (sum, product) => sum + product.quantity,
+            0
+          ),
+          totalPrice: updatedProducts.reduce(
+            (sum, product) => sum + product.price,
+            0
+          ),
+        }));
+      },
     }),
     { name: "cart", skipHydration: true }
   )

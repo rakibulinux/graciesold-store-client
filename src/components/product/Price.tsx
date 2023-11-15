@@ -11,7 +11,7 @@ const Price = ({ product }: { product: ProductType }) => {
   const [total, setTotal] = useState(productPrice);
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
-  const { addToCart } = useCartStore();
+  const { addToCart, updateQuantity } = useCartStore();
   console.log(product, productPrice);
   useEffect(() => {
     useCartStore.persist.rehydrate();
@@ -34,6 +34,16 @@ const Price = ({ product }: { product: ProductType }) => {
     toast({ title: "The product added to the cart!" });
   };
 
+  const handleDecrease = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+    updateQuantity(product.id, quantity - 1);
+  };
+
+  const handleIncrease = () => {
+    setQuantity((prev) => (prev < 9 ? prev + 1 : 9));
+    updateQuantity(product.id, quantity + 1);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl text-red-500 font-semibold">${total}</h2>
@@ -44,17 +54,9 @@ const Price = ({ product }: { product: ProductType }) => {
         <div className="flex justify-between w-full p-3 ring-1 ring-red-500">
           <span>Quantity</span>
           <div className="flex gap-4 items-center">
-            <button
-              onClick={() => setQuantity((prev) => (prev > 1 ? prev - 1 : 1))}
-            >
-              {"<"}
-            </button>
+            <button onClick={() => handleDecrease()}>{"<"}</button>
             <span>{quantity}</span>
-            <button
-              onClick={() => setQuantity((prev) => (prev < 9 ? prev + 1 : 9))}
-            >
-              {">"}
-            </button>
+            <button onClick={() => handleIncrease()}>{">"}</button>
           </div>
         </div>
         {/* CART BUTTON */}

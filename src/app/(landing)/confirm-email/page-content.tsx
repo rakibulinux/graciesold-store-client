@@ -40,7 +40,6 @@ export function ConfirmEmailContent({ className, ...props }: CardProps) {
           variant: "success",
         });
       }
-      console.log(res);
     }
   };
 

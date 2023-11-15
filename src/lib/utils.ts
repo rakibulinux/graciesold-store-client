@@ -26,7 +26,6 @@ export async function postData<T>(
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    console.log(response);
     const responseData: T = await response.json(); // Parse the response JSON
     console.log("responseData from utils", responseData);
     return responseData; // Return the parsed data
@@ -143,4 +142,19 @@ export function convertToSlug(inputString: string) {
     .replace(/\s+/g, "-") // Replace spaces with hyphens
     .replace(/[^a-z0-9-]/g, "") // Remove non-alphanumeric characters (except hyphens)
     .replace(/--+/g, "-"); // Replace consecutive hyphens with a single hyphen
+}
+
+export function slugToTitle(slug: string) {
+  // Split the slug into words
+  const words = slug.split("-");
+
+  // Capitalize the first letter of each word
+  const capitalizedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+  );
+
+  // Join the words back into a string
+  const title = capitalizedWords.join(" ");
+
+  return title;
 }

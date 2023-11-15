@@ -16,7 +16,11 @@ const navItems = [
   { name: "CONTACT", url: "/contact" },
 ];
 
-const Navbar = ({ data }: IUser) => {
+interface NavData {
+  data?: IUser;
+}
+
+const Navbar = ({ data }: NavData) => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
@@ -69,7 +73,7 @@ const Navbar = ({ data }: IUser) => {
             </li>
             <div className="flex">
               {session ? (
-                <DropdownMenuItems data={data} />
+                <DropdownMenuItems data={data?.data!} />
               ) : (
                 <>
                   <Link
@@ -116,7 +120,7 @@ const Navbar = ({ data }: IUser) => {
             <div className="sm:flex sm:gap-4">
               <div className="hidden sm:flex">
                 {session ? (
-                  <DropdownMenuItems data={data} />
+                  <DropdownMenuItems data={data?.data!} />
                 ) : (
                   <>
                     <Link

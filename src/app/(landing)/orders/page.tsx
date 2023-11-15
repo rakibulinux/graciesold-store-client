@@ -21,9 +21,8 @@ const getData = async (token: string) => {
 const page = async () => {
   const session = await getServerAuthSession();
   const data = await getData(session?.backendTokens?.accessToken!);
-  console.log(data);
   return (
-    <div>
+    <div className="min-h-screen">
       <OrdersPage data={data} />
     </div>
   );

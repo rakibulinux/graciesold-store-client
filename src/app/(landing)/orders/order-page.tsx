@@ -22,6 +22,7 @@ const OrdersPage = ({ data }: any) => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${session?.backendTokens.accessToken}`,
       },
       body: JSON.stringify({ status }),
     });

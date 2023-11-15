@@ -1,5 +1,3 @@
-import { ShowMeToast } from "@/components/error";
-import { toast, useToast } from "@/components/ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
 import { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -14,7 +12,6 @@ async function refreshToken(token: JWT): Promise<JWT> {
       authorization: token.backendTokens.refreshToken,
     },
   });
-  console.log("Refreshed");
   const response = await res.json();
   const data = response.data.backendTokens;
   return {
@@ -53,11 +50,7 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (res.status == 401) {
-          toast({
-            title: res.statusText,
-          });
-          console.log(res.statusText);
-          throw Error("Email Or Password not Match");
+          throw Error("Credentials Does Not Match!");
         }
         const user = await res.json();
         if (!user.data.user.isEmailVerified) {
@@ -75,14 +68,11 @@ export const authOptions: NextAuthOptions = {
 
       if (new Date().getTime() < token.backendTokens.expiresIn) return token;
 
-      console.log(new Date().getTime() < token.backendTokens.expiresIn);
-
       isRefreshing = true;
       try {
         const refreshedToken = await refreshToken(token);
         return refreshedToken;
       } finally {
-        console.log("i finally");
         isRefreshing = false;
       }
     },

@@ -41,7 +41,6 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   const onImageUpload = (data: any) => {
     setSelectedImage(data.profileImg);
   };
-  console.log(user);
   const router = useRouter();
 
   const form = useForm<FormValues>({

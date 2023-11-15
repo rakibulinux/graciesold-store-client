@@ -8,12 +8,12 @@ import {
 } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
 import AddressForm from "./AddressForm";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-
-  const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +25,6 @@ const CheckoutForm = () => {
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
-
     if (!clientSecret) {
       return;
     }
@@ -63,7 +62,7 @@ const CheckoutForm = () => {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000/success",
+        return_url: `http://localhost:3000/success`,
       },
     });
 
@@ -82,27 +81,40 @@ const CheckoutForm = () => {
   };
 
   return (
-    <form
-      id="payment-form"
-      onSubmit={handleSubmit}
-      className="min-h-[calc(100vh-6rem)] md:min-h-[calc(100vh-15rem)] p-4 lg:px-20 xl:px-40 flex flex-col gap-8"
-    >
-      <LinkAuthenticationElement id="link-authentication-element" />
-      <PaymentElement
-        id="payment-element"
-        options={{
-          layout: "tabs",
-        }}
-      />
-      <AddressForm />
-      <button disabled={isLoading || !stripe || !elements} id="submit" className="bg-red-500 text-white p-4 rounded-md w-28">
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
-      </button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
-    </form>
+    <section className="min-h-screen">
+      <form
+        id="payment-form"
+        onSubmit={handleSubmit}
+        className="p-4 lg:px-20 xl:px-40 flex flex-col gap-8"
+      >
+        <LinkAuthenticationElement id="link-authentication-element" />
+        <PaymentElement
+          id="payment-element"
+          options={{
+            layout: "tabs",
+          }}
+        />
+        <AddressForm />
+        <Button
+          disabled={isLoading || !stripe || !elements}
+          id="submit"
+          className="p-4 rounded-md w-28"
+        >
+          <span id="button-text">
+            {isLoading ? (
+              <div className="flex" id="spinner">
+                <Loader2 className="animate-spin h-5 w-5 mr-3 " />
+                Processing...
+              </div>
+            ) : (
+              "Pay now"
+            )}
+          </span>
+        </Button>
+        {/* Show any error or success messages */}
+        {message && <div id="payment-message">{message}</div>}
+      </form>
+    </section>
   );
 };
 

@@ -3,18 +3,18 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
 import { useCartStore } from "@/lib/store";
-import { postData } from "@/lib/utils";
+import { ProductType } from "@/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const CartPage = () => {
   const { toast } = useToast();
   const { products, totalItems, totalPrice, removeFromCart } = useCartStore();
   const { data: session } = useSession();
   const router = useRouter();
-
+  const [quantity, setQuantity] = useState(1);
   useEffect(() => {
     useCartStore.persist.rehydrate();
   }, []);
@@ -37,16 +37,29 @@ const CartPage = () => {
           }),
         });
         const data = await res.json();
-        if (data.data.id) {
+        if (!!data.data.id) {
           toast({ title: `Order placed! Order ID: ${data.data.id}` });
-          router.push(`/pay/${data.data.id}`);
+          router.push(`/pay/${data?.data?.id}`);
         }
       } catch (err) {
         console.log(err);
       }
     }
   };
-  console.log(products);
+  const { updateQuantity } = useCartStore();
+
+  const handleDecrease = (item: any) => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+    console.log(quantity);
+    updateQuantity(item.id, quantity - 1);
+  };
+
+  const handleIncrease = (item: any) => {
+    setQuantity((prev) => (prev < 9 ? prev + 1 : 9));
+    console.log(quantity);
+    updateQuantity(item.id, quantity + 1);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="px-4 py-8 max-w-[1300px] mx-auto">
@@ -73,11 +86,17 @@ const CartPage = () => {
                       </h3>
                       <p className="text-gray-500 text-sm">Pizza</p>
                       <div className="flex items-center gap-3 mt-3 ">
-                        <button className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center">
+                        <button
+                          onClick={() => handleDecrease(item)}
+                          className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
+                        >
                           -
                         </button>
                         <span>{item.quantity}</span>
-                        <button className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center">
+                        <button
+                          onClick={() => handleIncrease(item)}
+                          className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
+                        >
                           +
                         </button>
                       </div>

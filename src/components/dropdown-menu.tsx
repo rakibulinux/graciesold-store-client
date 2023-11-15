@@ -25,7 +25,6 @@ export function DropdownMenuItems({ data }: IUser) {
         authorization: `Bearer ${session?.backendTokens?.accessToken}`,
       },
     });
-    console.log("response", response);
     signOut();
   };
   const profilePic = data?.profile?.profileImg;

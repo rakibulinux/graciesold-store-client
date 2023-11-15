@@ -31,7 +31,6 @@ export const columns: ColumnDef<ProductType>[] = [
     header: "Image",
     cell: ({ row }) => {
       const product = row.original;
-      console.log(product);
       return (
         <Image
           src={Backend_URL + product.images[0].path} // Make sure "image" is a valid path to your image
@@ -105,9 +104,10 @@ export const columns: ColumnDef<ProductType>[] = [
           product.id,
           session?.backendTokens?.accessToken!
         );
-        console.log(res);
         if (res) {
-          toast({ title: `Product Deleted Successfully! ${product.name}` });
+          toast({
+            title: `This ${product.name} Product Has been Deleted Successfully!`,
+          });
         }
       };
       return (

@@ -19,7 +19,6 @@ type CategoryValues = {
 };
 
 const UpdateCategory = ({ category }: CategoryValues) => {
-  console.log(category);
   const { data: session } = useSession();
   const router = useRouter();
   const { toast } = useToast();

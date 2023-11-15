@@ -13,7 +13,7 @@ const LandingLayout = async ({ children }: { children: React.ReactNode }) => {
   );
   return (
     <main>
-      <Navbar data={userProfile.data} />
+      <Navbar data={userProfile} />
       <div>
         {children}
         <Footer />

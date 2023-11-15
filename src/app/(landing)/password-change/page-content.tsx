@@ -78,14 +78,13 @@ const ChangePassword = ({ className, ...props }: CardProps) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(res);
       if (res?.ok) {
         toast({
           title: "Reset successfully",
           description: `Your Password Has Been Rest successfully!`,
           variant: "success",
         });
-        // router.push("/sign-in");
+        router.push("/sign-in");
       }
     } catch (error: any) {
       toast({

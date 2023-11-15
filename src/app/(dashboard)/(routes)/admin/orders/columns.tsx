@@ -22,12 +22,12 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "image",
     header: "Image",
     cell: ({ row }) => {
-      const service = row.original;
-      console.log(service);
+      const order = row.original;
+      console.log(order);
       return (
         <Image
-          src={service.image} // Make sure "image" is a valid path to your image
-          alt={service.name} // Use the appropriate alt text
+          src={order.image} // Make sure "image" is a valid path to your image
+          alt={order.name} // Use the appropriate alt text
           width={100} // Customize the width of the image
           height={100} // Customize the height of the image
         />
@@ -49,8 +49,8 @@ export const columns: ColumnDef<any>[] = [
       );
     },
     // cell: ({ row }) => {
-    //   const service = row.original?.services;
-    //   return <p>{service.name.slice(0, 50)}</p>;
+    //   const order = row.original?.orders;
+    //   return <p>{order.name.slice(0, 50)}</p>;
     // },
   },
   // {
@@ -81,7 +81,7 @@ export const columns: ColumnDef<any>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const service = row.original;
+      const order = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -93,7 +93,7 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-            // onClick={() => navigator.clipboard.writeText(service.id)}
+            // onClick={() => navigator.clipboard.writeText(order.id)}
             >
               Copy Booking ID
             </DropdownMenuItem>
@@ -102,7 +102,7 @@ export const columns: ColumnDef<any>[] = [
             </Link>
             {/* <DropdownMenuItem> */}
             {/* <DialogCloseButton
-                handleDelete={() => deleteService(service.id)}
+                handleDelete={() => deleteorder(order.id)}
               /> */}
             {/* </DropdownMenuItem> */}
             <DropdownMenuSeparator />

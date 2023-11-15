@@ -39,8 +39,6 @@ const SignIn = () => {
         redirect: false,
         // callbackUrl: "/",
       });
-      // window.location.reload();
-
       if (result?.ok && !result.error) {
         toast({
           title: "User signin succesfully",
@@ -56,7 +54,6 @@ const SignIn = () => {
           variant: "destructive",
         });
       }
-      console.log(result);
     } catch (error: any) {
       console.log("error", error);
       toast({

@@ -9,12 +9,13 @@ import { Label } from "../ui/label";
 import { useSession } from "next-auth/react";
 import { useToast } from "../ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
-import { convertToSlug } from "@/lib/utils";
+import { convertToSlug, postData } from "@/lib/utils";
 import UploadImage from "./UploadImage";
 import { ChangeEvent, useState } from "react";
 
 type FormValues = {
   name: string;
+  slug: string;
 };
 
 const CreateCategory = () => {
@@ -46,29 +47,29 @@ const CreateCategory = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    try {
-      console.log(data);
-      const slug = convertToSlug(data.name);
-      const res = await fetch(`${Backend_URL}/category`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${session?.backendTokens?.accessToken}`,
-        },
-        body: JSON.stringify({
-          name: data.name,
-          slug,
-        }),
+    if (!selectedFile) {
+      return toast({
+        title: "Insert at least one product image",
+        variant: "destructive",
       });
-      console.log(res);
-      if (res?.ok) {
-        console.log(res);
-        await handleUpload("c34979e4-e10d-463e-91d0-42477527032d");
-        // router.push("/admin/categories");
-        toast({ title: "Category Created Successfully" });
+    }
+    data["slug"] = convertToSlug(data.name);
+    try {
+      const res: any = await postData(
+        "category",
+        data,
+        session?.backendTokens?.accessToken
+      );
+      if (res) {
+        const { id } = res.data;
+        await handleUpload(id);
+        toast({ title: "Category Created Successfully", variant: "success" });
+        setTimeout(() => {
+          router.push("/admin/categories/");
+        }, 3000);
       }
-    } catch (error) {
-      console.log(`${error}`);
+    } catch (error: any) {
+      toast({ title: error.message });
     }
   };
   const handleUpload = async (id: string) => {
