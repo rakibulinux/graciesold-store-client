@@ -1,6 +1,6 @@
 import { getAllData, getSingleData } from "@/lib/utils";
-import { MenuType } from "@/types/types";
 import UpdateProduct from "./update-page";
+import { MenuType } from "@/types/types";
 
 export default async function Page({ params }: any) {
   const category: MenuType = await getAllData("category");

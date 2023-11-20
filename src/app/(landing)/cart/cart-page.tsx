@@ -2,7 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
+import { ORDER_NUMBER } from "@/lib/createOrderNumber";
 import { useCartStore } from "@/lib/store";
+import { User } from "@/types/types";
+import { getData } from "@/lib/utils";
 import { ProductType } from "@/types/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -11,53 +14,86 @@ import React, { useEffect, useState } from "react";
 
 const CartPage = () => {
   const { toast } = useToast();
-  const { products, totalItems, totalPrice, removeFromCart } = useCartStore();
+  const {
+    products,
+    resetCart,
+    deleteFromcart,
+    increaseCartItem,
+    decreaseCartItem,
+  } = useCartStore();
   const { data: session } = useSession();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
+  const [subTotal, setSubTotal] = useState(0);
+  // const serviceFee = 6 || 0;
+  // const deliveryFee = 3 || 0;
+  // const discount = 2 || 0;
+  // const fees = serviceFee + deliveryFee;
+  // const totalPrice = fees + (subTotal - discount);
   useEffect(() => {
     useCartStore.persist.rehydrate();
   }, []);
 
+  useEffect(() => {
+    const getSubTotal = () => {
+      const res = products.reduce(
+        (prev, item) => prev + item.price * item.quantity,
+        0
+      );
+      // Calculate total quantity
+      const totalQuantity = products.reduce(
+        (prev, product) => prev + product.quantity,
+        0
+      );
+      setQuantity(totalQuantity);
+      setSubTotal(res);
+    };
+    getSubTotal();
+  }, [products]);
+
   const handleCheckout = async () => {
+    const userInfo: User = await getData(
+      "users/me",
+      session?.backendTokens.accessToken
+    );
     if (!session) {
       router.push("/sign-in");
     } else {
-      try {
-        const res = await fetch(`${Backend_URL}/order`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${session.backendTokens.accessToken}`,
-          },
-          body: JSON.stringify({
-            price: totalPrice,
-            products,
-            userId: session.user.id,
-          }),
+      if (!userInfo?.profile?.address || !userInfo?.profile?.phoneNo) {
+        toast({
+          title: "Please update your profile",
+          description: "Update your address and phone number",
+          variant: "destructive",
         });
-        const data = await res.json();
-        if (!!data.data.id) {
-          toast({ title: `Order placed! Order ID: ${data.data.id}` });
-          router.push(`/pay/${data?.data?.id}`);
+        router.push(`${session?.user.role}/profile`);
+      } else {
+        try {
+          const res = await fetch(`${Backend_URL}/order`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${session?.backendTokens.accessToken}`,
+            },
+            body: JSON.stringify({
+              order_number: ORDER_NUMBER,
+              price: subTotal,
+              products,
+              userId: session?.user.id,
+              address: userInfo?.profile.address,
+              phoneNo: userInfo?.profile.phoneNo,
+            }),
+          });
+          const data = await res.json();
+          if (!!data.data.id) {
+            toast({ title: `Order placed! Order ID: ${data.data.id}` });
+            router.push(`/pay/${data?.data?.id}`);
+            resetCart();
+          }
+        } catch (err) {
+          console.log(err);
         }
-      } catch (err) {
-        console.log(err);
       }
     }
-  };
-  const { updateQuantity } = useCartStore();
-
-  const handleDecrease = (item: any) => {
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-    console.log(quantity);
-    updateQuantity(item.id, quantity - 1);
-  };
-
-  const handleIncrease = (item: any) => {
-    setQuantity((prev) => (prev < 9 ? prev + 1 : 9));
-    console.log(quantity);
-    updateQuantity(item.id, quantity + 1);
   };
 
   return (
@@ -68,7 +104,7 @@ const CartPage = () => {
             {/* SINGLE ITEM */}
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Cart</h2>
             <hr className="my-2" />
-            {products ? (
+            {products.length > 0 ? (
               products.map((item) => (
                 // eslint-disable-next-line react/jsx-key
                 <div className="flex justify-between border-b border-gray-300 py-4">
@@ -84,17 +120,18 @@ const CartPage = () => {
                       <h3 className=" text-md md:text-lg font-semibold">
                         {item.name}
                       </h3>
-                      <p className="text-gray-500 text-sm">Pizza</p>
+                      {/* <p className="text-gray-500 text-sm">{item.}</p> */}
                       <div className="flex items-center gap-3 mt-3 ">
                         <button
-                          onClick={() => handleDecrease(item)}
+                          onClick={() => decreaseCartItem(products, item.id)}
                           className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
+                          disabled={item.quantity === 1 ? true : false}
                         >
                           -
                         </button>
                         <span>{item.quantity}</span>
                         <button
-                          onClick={() => handleIncrease(item)}
+                          onClick={() => increaseCartItem(products, item.id)}
                           className="bg-black text-white rounded-full h-6 w-6 flex items-center justify-center"
                         >
                           +
@@ -105,37 +142,18 @@ const CartPage = () => {
                   <div>
                     <p className="  font-medium text-lg">{item.price} $</p>
                     <button
-                      onClick={() => removeFromCart(item)}
+                      onClick={() => deleteFromcart(item.id)}
                       className="text-red-400"
                     >
                       Remove
                     </button>
                   </div>
                 </div>
-                // <div
-                //   className="flex items-center justify-between mb-4"
-                //   key={item.id}
-                // >
-                //   {item.image && (
-                //     <Image src={item.image} alt="" width={100} height={100} />
-                //   )}
-                //   <div className="">
-                //     <h1 className="uppercase text-xl font-bold">
-                //       {item.name} x{item.quantity}
-                //     </h1>
-                //     <span>{item.name}</span>
-                //   </div>
-                //   <h2 className="font-bold">${item.price}</h2>
-                //   <span
-                //     className="cursor-pointer"
-                //     onClick={() => removeFromCart(item)}
-                //   >
-                //     X
-                //   </span>
-                //</div>
               ))
             ) : (
-              <p>Your cart is empty.</p>
+              <p className="flex items-center justify-center text-2xl">
+                Your cart is empty.
+              </p>
             )}
           </div>
           {/* PAYMENT CONTAINER */}
@@ -143,8 +161,8 @@ const CartPage = () => {
             <h3 className="text-xl font-semibold mb-2">Total</h3>
             <hr className="my-2" />
             <div className="flex justify-between">
-              <span className="">Subtotal ({totalItems} items)</span>
-              <span className="">${totalPrice}</span>
+              <span className="">Subtotal ({quantity} items)</span>
+              <span className="">${subTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span className="">Service Cost</span>
@@ -157,14 +175,22 @@ const CartPage = () => {
             <hr className="my-2" />
             <div className="flex justify-between">
               <span className="">TOTAL(INCL. VAT)</span>
-              <span className="font-bold">${totalPrice}</span>
+              <span className="font-bold">${subTotal.toFixed(2)}</span>
             </div>
-            <Button
-              className="bg-red-500 text-white p-3 rounded-md self-end"
-              onClick={handleCheckout}
-            >
-              Checkout
-            </Button>
+            <div className="flex gap-4 justify-end my-4">
+              <Button
+                className="bg-green-500 text-white p-3 rounded-md self-end"
+                onClick={handleCheckout}
+              >
+                Checkout
+              </Button>
+              <Button
+                className="bg-red-500 text-white p-3 rounded-md self-end"
+                onClick={resetCart}
+              >
+                Reset Cart
+              </Button>
+            </div>
           </div>
         </div>
       </div>

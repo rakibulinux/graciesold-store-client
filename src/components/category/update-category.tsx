@@ -2,7 +2,13 @@
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { CategoryType } from "@/types/types";
@@ -10,9 +16,11 @@ import { Backend_URL } from "@/lib/Constants";
 import { useSession } from "next-auth/react";
 import { convertToSlug } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
+import { Textarea } from "../ui/textarea";
 
 type FormValues = {
   name: string;
+  description: string;
 };
 type CategoryValues = {
   category: CategoryType;
@@ -28,6 +36,7 @@ const UpdateCategory = ({ category }: CategoryValues) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const slug = convertToSlug(data.name);
+    console.log(data);
     try {
       const res = await fetch(`${Backend_URL}/category/${category?.id}`, {
         method: "PATCH",
@@ -37,6 +46,7 @@ const UpdateCategory = ({ category }: CategoryValues) => {
         },
         body: JSON.stringify({
           name: data.name,
+          description: data.description,
           slug,
         }),
       });
@@ -58,7 +68,7 @@ const UpdateCategory = ({ category }: CategoryValues) => {
               mx-auto mb-0 mt-8 space-y-4
               "
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
             <div>
               <Label className="my-2" title="name" htmlFor="name">
                 Category Name
@@ -77,6 +87,27 @@ const UpdateCategory = ({ category }: CategoryValues) => {
                         defaultValue={category?.name}
                       />
                     </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="my-4">
+              <Label className="my-2" title="description" htmlFor="description">
+                Description
+              </Label>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        defaultValue={category.description}
+                        placeholder="Write Category Description"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

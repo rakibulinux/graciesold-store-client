@@ -13,12 +13,12 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import { Backend_URL } from "@/lib/Constants";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 
-export function DropdownMenuItems({ data }: IUser) {
+export function DropdownMenuItems({ user }: { user: User }) {
   const { data: session } = useSession();
   const signOutUser = async () => {
-    const response = await fetch(`${Backend_URL}/auth/logout`, {
+    await fetch(`${Backend_URL}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,14 +27,18 @@ export function DropdownMenuItems({ data }: IUser) {
     });
     signOut();
   };
-  const profilePic = data?.profile?.profileImg;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
           <Avatar>
             <AvatarImage
-              src={profilePic ? profilePic : "https://github.com/shadcn.png"}
+              src={
+                user?.profile?.profileImg
+                  ? Backend_URL + user?.profile?.profileImg.path
+                  : "https://github.com/shadcn.png"
+              }
             />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>

@@ -15,7 +15,6 @@ const stripePromise = loadStripe(
 const PayPage = ({ params }: { params: { id: string } }) => {
   const [clientSecret, setClientSecret] = useState("");
   const { data: session } = useSession();
-  const router = useRouter();
 
   const { id } = params;
 
@@ -28,6 +27,7 @@ const PayPage = ({ params }: { params: { id: string } }) => {
             authorization: `Bearer ${session?.backendTokens?.accessToken}`,
           },
         });
+
         const data = await res.json();
         if (data.data) {
           setClientSecret(data.data.clientSecret);
@@ -46,9 +46,6 @@ const PayPage = ({ params }: { params: { id: string } }) => {
       theme: "stripe",
     },
   };
-  // if (!clientSecret) {
-  //   router.push("/menu");
-  // }
   return (
     <section className="min-h-screen">
       {clientSecret && (

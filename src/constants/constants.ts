@@ -4,11 +4,10 @@ import {
   ImageIcon,
   Layers2,
   Music,
-  Repeat,
+  PackageSearch,
   Settings,
-  ShieldPlus,
-  User2,
-  UserPlus,
+  User,
+  Users,
   VideoIcon,
 } from "lucide-react";
 
@@ -17,21 +16,21 @@ export const MAX_FREE_COUNTS = 5;
 export const adminTools = [
   {
     label: "Customers",
-    icon: User2,
+    icon: Users,
     href: "/admin/customers",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
   {
     label: "Profile",
-    icon: ShieldPlus,
+    icon: User,
     color: "text-pink-700",
     href: "/admin/profile",
     bgColor: "bg-emerald-500/10",
   },
   {
     label: "Products",
-    icon: Repeat,
+    icon: PackageSearch,
     color: "text-orange-700",
     href: "/admin/products",
     bgColor: "bg-pink-700/10",
@@ -92,7 +91,7 @@ export const tools = [
 export const customerTools = [
   {
     label: "Profile",
-    icon: ShieldPlus,
+    icon: User,
     color: "text-pink-700",
     href: "/customer/profile",
     bgColor: "bg-emerald-500/10",

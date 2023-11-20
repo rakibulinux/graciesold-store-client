@@ -1,10 +1,8 @@
-import { useState, ChangeEvent } from "react";
 import Image from "next/image";
 
 import { Input } from "../ui/input";
 import { Trash, UploadCloud } from "lucide-react";
 import { Button } from "../ui/button";
-import { Key } from "react";
 
 interface IImageType {
   selectedFile: any;

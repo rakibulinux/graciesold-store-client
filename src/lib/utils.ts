@@ -94,16 +94,15 @@ export async function getData<T>(url: string, token?: string): Promise<T> {
         "Content-Type": "application/json", // Adjust the content type as needed
         authorization: `Bearer ${token}`,
       },
-      cache: "no-cache",
+      next: { tags: ["collection"] },
     });
 
     // if (!response.ok) {
     //   // Handle non-successful responses here (e.g., check for status code and throw an error)
     //   throw new Error(`HTTP error! Status: ${response.status}`);
     // }
-
-    const responseData: T = await response.json(); // Parse the response JSON
-    return responseData; // Return the parsed data
+    const responseData = await response.json(); // Parse the response JSON
+    return responseData.data; // Return the parsed data
   } catch (error) {
     console.error("Error:", error);
     throw error; // Rethrow the error for further handling or logging
@@ -119,7 +118,7 @@ export const getAllData = async (url: string) => {
 };
 export const getSingleData = async (url: string, id: string) => {
   const res = await fetch(`${Backend_URL}/${url}/${id}`, {
-    cache: "no-cache",
+    next: { tags: ["collection"] },
   });
   const data = await res.json();
   return data.data;
@@ -138,10 +137,10 @@ export const getSingleProudct = (_id: number) => {
 
 export function convertToSlug(inputString: string) {
   return inputString
-    .toLowerCase() // Convert to lowercase
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/[^a-z0-9-]/g, "") // Remove non-alphanumeric characters (except hyphens)
-    .replace(/--+/g, "-"); // Replace consecutive hyphens with a single hyphen
+    ?.toLowerCase() // Convert to lowercase
+    ?.replace(/\s+/g, "-") // Replace spaces with hyphens
+    ?.replace(/[^a-z0-9-]/g, "") // Remove non-alphanumeric characters (except hyphens)
+    ?.replace(/--+/g, "-"); // Replace consecutive hyphens with a single hyphen
 }
 
 export function slugToTitle(slug: string) {

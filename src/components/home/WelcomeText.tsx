@@ -1,6 +1,6 @@
 const WelcomeText = () => {
   return (
-    <div className="mt-32 w-10/12 mx-auto text-lg">
+    <div className="mt-10 w-10/12 mx-auto text-lg">
       <div className="flex flex-col items-center justify-center space-y-4 md:space-y-0 md:items-center md:flex-row md:space-x-4 text-sky-650 my-10">
         <hr className="w-full md:w-52 h-1 bg-sky-650" />
         <span className="text-lg md:text-3xl font-bold">

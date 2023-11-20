@@ -49,14 +49,16 @@ export const authOptions: NextAuthOptions = {
             "Content-Type": "application/json",
           },
         });
-        if (res.status == 401) {
-          throw Error("Credentials Does Not Match!");
-        }
         const user = await res.json();
-        if (!user.data.user.isEmailVerified) {
+        if (user?.error?.code === 404000) {
+          throw Error(`User Doesn't exist in databases`);
+        } else if (user?.data?.user?.isEmailVerified === false) {
           throw Error("Email is not verified. Please verify your email.");
+        } else if (res?.status == 401) {
+          throw Error("Credentials doesn't match!");
+        } else {
+          return user.data;
         }
-        return user.data;
       },
     }),
   ],

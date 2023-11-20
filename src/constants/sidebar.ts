@@ -1,13 +1,11 @@
 import {
   Store,
-  Code,
   Layers2,
   LayoutDashboard,
-  Repeat,
-  Settings,
-  ShieldPlus,
-  User2,
-  UserPlus,
+  User,
+  Users,
+  Contact,
+  PackageSearch,
 } from "lucide-react";
 
 export const adminRoutes = [
@@ -19,19 +17,14 @@ export const adminRoutes = [
   },
   {
     label: "Customers",
-    icon: User2,
+    icon: Users,
     href: "/admin/customers",
     color: "text-violet-500",
   },
-  {
-    label: "Profile",
-    icon: ShieldPlus,
-    color: "text-pink-700",
-    href: "/admin/profile",
-  },
+
   {
     label: "Products",
-    icon: Repeat,
+    icon: PackageSearch,
     color: "text-orange-700",
     href: "/admin/products",
   },
@@ -48,9 +41,16 @@ export const adminRoutes = [
     href: "/admin/orders",
   },
   {
-    label: "Settings",
-    icon: Settings,
-    href: "/admin/settings",
+    label: "Contact",
+    icon: Contact,
+    color: "text-green-700",
+    href: "/admin/contact",
+  },
+  {
+    label: "Profile",
+    icon: User,
+    color: "text-pink-700",
+    href: "/admin/profile",
   },
 ];
 export const customerRoutes = [
@@ -62,7 +62,7 @@ export const customerRoutes = [
   },
   {
     label: "Profile",
-    icon: ShieldPlus,
+    icon: User,
     color: "text-pink-700",
     href: "/customer/profile",
   },
@@ -72,9 +72,9 @@ export const customerRoutes = [
     color: "text-pink-700",
     href: "/customer/order-history",
   },
-  {
-    label: "Settings",
-    icon: Settings,
-    href: "/customer/settings",
-  },
+  // {
+  //   label: "Settings",
+  //   icon: Settings,
+  //   href: "/customer/settings",
+  // },
 ];

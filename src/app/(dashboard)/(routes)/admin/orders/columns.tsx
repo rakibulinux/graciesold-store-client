@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Check, MoreHorizontal, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -16,67 +17,103 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
+import { OrderType } from "@/types/types";
+import { Backend_URL } from "@/lib/Constants";
+import { Badge } from "@/components/ui/badge";
+import OrderDetails from "@/components/order-details";
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<OrderType>[] = [
   {
-    accessorKey: "image",
-    header: "Image",
+    accessorKey: "order_number",
+    header: "Order Number",
+  },
+  {
+    accessorKey: "paymentStatus",
+    header: "PAID",
     cell: ({ row }) => {
       const order = row.original;
-      console.log(order);
       return (
-        <Image
-          src={order.image} // Make sure "image" is a valid path to your image
-          alt={order.name} // Use the appropriate alt text
-          width={100} // Customize the width of the image
-          height={100} // Customize the height of the image
-        />
+        <div>
+          {order.paymentStatus ? (
+            <Check className="text-green-600" />
+          ) : (
+            <X className="text-red-600" />
+          )}
+        </div>
       );
     },
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      //console.log(column);
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    // cell: ({ row }) => {
-    //   const order = row.original?.orders;
-    //   return <p>{order.name.slice(0, 50)}</p>;
-    // },
+    accessorKey: "intent_id",
+    header: "Payment Token",
   },
-  // {
-  //   accessorKey: "description",
-  //   header: "Description",
-  //   cell: ({ row }) => {
-  //     return <div>{row.original.?.slice(0, 50)}</div>;
-  //   },
-  // },
-
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Delivered",
+    cell: ({ row }) => {
+      const { data: session } = useSession();
+      const status = row.original.status;
+      const { toast } = useToast();
+      const mutation = async (id: string, status: string) => {
+        const res = await fetch(`${Backend_URL}/order/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${session?.backendTokens.accessToken}`,
+          },
+          body: JSON.stringify({ status }),
+        });
+        if (!res.ok) {
+          throw new Error("Failed!");
+        }
+        const data = await res.json();
+
+        return data.data;
+      };
+
+      const handleUpdate = async (status: string, id: string) => {
+        console.log(id, status);
+        await mutation(id, status);
+
+        toast({
+          title: "The order status has been changed!",
+        });
+      };
+      return (
+        <p>
+          {status === "pending" ? (
+            <Button
+              onClick={() => handleUpdate("delivered", row.original.id)}
+              className="h-6 text-red-400 bg-red-200 py-1 px-2 rounded-md hover:text-red-500 hover:bg-red-300"
+            >
+              Mark Delivered
+            </Button>
+          ) : (
+            <Check className="text-green-600" />
+          )}
+        </p>
+      );
+    },
   },
   {
-    accessorKey: "time",
-    header: "Time",
+    accessorKey: "products",
+    header: "Details",
+    cell: ({ row }) => {
+      const order = row.original;
+
+      return <OrderDetails order={order} />;
+    },
   },
   {
-    accessorKey: "date",
-    header: "Order At",
-    // cell: ({ row }) => {
-    //   const date = new Date(row.getValue("date"));
-    //   const formatted = date.toLocaleDateString();
-    //   return <div className="font-medium">{formatted}</div>;
-    // },
+    accessorKey: "createdAt",
+    header: "Order Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("createdAt"));
+      const formatted = date.toLocaleDateString();
+      return <div className="font-medium">{formatted}</div>;
+    },
   },
   {
     id: "actions",
@@ -93,21 +130,11 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-            // onClick={() => navigator.clipboard.writeText(order.id)}
+              onClick={() => navigator.clipboard.writeText(order.id)}
             >
-              Copy Booking ID
+              Copy Order ID
             </DropdownMenuItem>
-            <Link href={`/admin/bookings/edit/`}>
-              <DropdownMenuItem>Update</DropdownMenuItem>
-            </Link>
-            {/* <DropdownMenuItem> */}
-            {/* <DialogCloseButton
-                handleDelete={() => deleteorder(order.id)}
-              /> */}
-            {/* </DropdownMenuItem> */}
             <DropdownMenuSeparator />
-
-            {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

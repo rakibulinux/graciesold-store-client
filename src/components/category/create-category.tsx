@@ -3,7 +3,13 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useSession } from "next-auth/react";
@@ -12,10 +18,12 @@ import { Backend_URL } from "@/lib/Constants";
 import { convertToSlug, postData } from "@/lib/utils";
 import UploadImage from "./UploadImage";
 import { ChangeEvent, useState } from "react";
+import { Textarea } from "../ui/textarea";
 
 type FormValues = {
   name: string;
   slug: string;
+  description: string;
 };
 
 const CreateCategory = () => {
@@ -117,7 +125,7 @@ const CreateCategory = () => {
               mx-auto mb-0 mt-8 space-y-4
               "
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
             <div>
               <Label className="my-2" title="name" htmlFor="name">
                 Category Name
@@ -135,6 +143,26 @@ const CreateCategory = () => {
                         type="text"
                       />
                     </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="my-4">
+              <Label className="my-2" title="description" htmlFor="description">
+                Description
+              </Label>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Write Category Description"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

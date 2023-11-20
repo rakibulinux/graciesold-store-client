@@ -20,24 +20,24 @@ const SuccessPage = () => {
           },
         });
         setTimeout(() => {
-          router.push("/orders");
-        }, 5000);
+          router.push(`/menu`);
+        }, 3000);
       } catch (err) {
         console.log(err);
       }
     };
 
     makeRequest();
-  }, [payment_intent, router, session?.backendTokens.accessToken]);
+  }, [session?.backendTokens.accessToken, payment_intent, router]);
 
   return (
     <>
       <div className="min-h-screen md:min-h-screen flex items-center justify-center text-center text-2xl text-green-700">
+        <ConfettiExplosion className="absolute m-auto" />
         <p className="max-w-[600px]">
           Payment successful. You are being redirected to the orders page.
           Please do not close the page.
         </p>
-        <ConfettiExplosion className="absolute m-auto" />
       </div>
     </>
   );

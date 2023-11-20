@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tailwind.config.ts",
-    "src/lib/next-auth.d.ts"
+    "src/types/next-auth.d.ts"
   ],
   "exclude": ["node_modules"]
 }

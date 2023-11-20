@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { Backend_URL } from "@/lib/Constants";
+import { Button } from "../ui/button";
 
 const DeleteButton = ({ id }: { id: string }) => {
   const { data: session, status } = useSession();
@@ -33,12 +34,12 @@ const DeleteButton = ({ id }: { id: string }) => {
   };
 
   return (
-    <button
+    <Button
       className="bg-red-400 hover:bg-red-500 text-white p-2 rounded-full ml-6"
       onClick={handleDelete}
     >
       <Image src="/delete.png" alt="" width={20} height={20} />
-    </button>
+    </Button>
   );
 };
 

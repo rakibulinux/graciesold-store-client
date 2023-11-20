@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FileUpload } from "./../file-upload";
 
@@ -19,6 +19,11 @@ import { Editor } from "../quil/editor";
 import { toast } from "../ui/use-toast";
 import { useSession } from "next-auth/react";
 import { patchPutData, postData } from "@/lib/utils";
+import { Backend_URL } from "@/lib/Constants";
+import UploadImage from "../category/UploadImage";
+import { Textarea } from "../ui/textarea";
+import UploadProfileImage from "./UploadProfileImage";
+import { Profile } from "@/types/types";
 
 type FormValues = {
   address: string;
@@ -27,7 +32,6 @@ type FormValues = {
   gender: string;
   name: string;
   phoneNo: string;
-  profileImg: string;
 };
 
 type IProfileUpdateProps = {
@@ -36,43 +40,87 @@ type IProfileUpdateProps = {
 };
 const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
   const { data: session } = useSession();
-  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
 
-  const onImageUpload = (data: any) => {
-    setSelectedImage(data.profileImg);
+    if (file) {
+      setSelectedFile(file);
+      setFileName(file.name);
+      setPreviewImage(URL.createObjectURL(file));
+    }
   };
+
+  const removeImage = () => {
+    setSelectedFile(null);
+    setFileName(null);
+    setPreviewImage(null);
+  };
+
   const router = useRouter();
 
   const form = useForm<FormValues>({
     defaultValues: {
       name: user?.name || "",
       bio: user?.profile?.bio || "",
-      profileImg: user?.profile?.profileImg || selectedImage,
     },
   });
 
   const formIsLoading = form.formState.isSubmitting;
 
   const onSubmit: SubmitHandler<FormValues> = async (values: any) => {
-    values["profileImg"] = selectedImage;
     try {
-      const res: { success: boolean } = await patchPutData(
+      const res: { success: boolean; data: Profile } = await patchPutData(
         "users",
         "me",
         values,
         "PATCH",
         session?.backendTokens?.accessToken!
       );
+
       if (res.success) {
-        router.push(`${urlPath}`);
+        await handleUpload(user.profile.id);
         toast({
           title: "Profile Updated Successfully",
         });
+        router.push(`${urlPath}`);
       }
     } catch (error: any) {
       toast({
         title: error.message,
       });
+    }
+  };
+
+  const handleUpload = async (id: string) => {
+    if (!selectedFile) {
+      // Handle the case where no file is selected
+      toast({ title: "No file selected", variant: "destructive" });
+      return;
+    }
+
+    const formData = new FormData();
+    const profileId = id;
+    console.log(profileId);
+    formData.append("file", selectedFile);
+    formData.append("profileId", profileId);
+
+    try {
+      const response = await fetch(`${Backend_URL}/files/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast({ title: "File uploaded successfully", variant: "success" });
+      } else {
+        const data = await response.json();
+        toast({ title: data.message, variant: "destructive" });
+      }
+    } catch (error: any) {
+      toast({ title: error.message, variant: "destructive" });
     }
   };
 
@@ -84,7 +132,18 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
             Update Your Profile
           </h1>
         </div>
-
+        <Label className="my-2" title="profileImg" htmlFor="profileImg">
+          Profile Picture
+        </Label>
+        <UploadProfileImage
+          handleFileChange={handleFileChange}
+          removeImage={removeImage}
+          selectedFile={selectedFile}
+          previewImage={previewImage}
+          profileImg={
+            user?.profile?.profileImg && user?.profile?.profileImg.path
+          }
+        />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -126,34 +185,15 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Editor {...field} defaultValue={user?.profile?.bio} />
+                        <Textarea
+                          {...field}
+                          defaultValue={user?.profile?.bio}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-              <div>
-                <Label className="my-2" title="profileImg" htmlFor="profileImg">
-                  Profile Picture
-                </Label>
-                {selectedImage ? (
-                  <Image
-                    src={selectedImage}
-                    alt="service image"
-                    height={100}
-                    width={200}
-                  />
-                ) : (
-                  <FileUpload
-                    endpoint="profileAttachment"
-                    onChange={(url) => {
-                      if (url) {
-                        onImageUpload({ profileImg: url });
-                      }
-                    }}
-                  />
-                )}
               </div>
               <div>
                 <Label className="my-2" title="phoneNo" htmlFor="phoneNo">

@@ -3,24 +3,11 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { UserProfile, UserRole } from "@/interface/userProfile";
+import { User } from "@/types/types";
 import { Preview } from "../quil/preview";
+import { Backend_URL } from "@/lib/Constants";
 
-interface IUserProfile {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    password: string;
-    role: UserRole;
-    createdAt: Date;
-    profile: UserProfile;
-    updatedAt: Date;
-    isEmailVerified: boolean;
-  };
-}
-
-const Profile = ({ user }: IUserProfile) => {
+const Profile = ({ user }: { user: User }) => {
   const { data: session } = useSession();
   return (
     <div className="px-6 w-11/12 mx-auto">
@@ -29,10 +16,11 @@ const Profile = ({ user }: IUserProfile) => {
           <Image
             src={
               user?.profile?.profileImg
-                ? user?.profile?.profileImg
-                : "/my-bg2.png"
+                ? Backend_URL + user?.profile?.profileImg.path!
+                : "https://github.com/shadcn.png"
             }
             alt="My Profile Image"
+            className="rounded-full"
             width={100}
             height={100}
           />
@@ -44,7 +32,7 @@ const Profile = ({ user }: IUserProfile) => {
             >
               <button
                 className="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                type="button"
+                type="submit"
               >
                 Update Profile
               </button>

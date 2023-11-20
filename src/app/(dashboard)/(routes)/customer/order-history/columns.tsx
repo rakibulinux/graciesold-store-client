@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Check, MoreHorizontal, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,66 +15,75 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
+import { Backend_URL } from "@/lib/Constants";
+import OrderDetails from "@/components/order-details";
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+import { OrderType } from "@/types/types";
 import Link from "next/link";
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<OrderType>[] = [
   {
-    accessorKey: "image",
-    header: "Image",
+    accessorKey: "order_number",
+    header: "Order Number",
+  },
+  {
+    accessorKey: "paymentStatus",
+    header: "PAID",
     cell: ({ row }) => {
-      const service = row.original.services;
-      // console.log(service);
+      const order = row.original;
       return (
-        <Image
-          src={service.image} // Make sure "image" is a valid path to your image
-          alt={service.name} // Use the appropriate alt text
-          width={100} // Customize the width of the image
-          height={100} // Customize the height of the image
-        />
+        <div>
+          {!order.paymentStatus ? (
+            <Check className="text-green-600" />
+          ) : (
+            <Link
+              className="p-2 bg-red-500 text-white rounded-md"
+              href={`/pay/${order.id}`}
+            >
+              Pay Now
+            </Link>
+          )}
+        </div>
       );
     },
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      //console.log(column);
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const service = row.original?.services;
-      return <p>{service.name.slice(0, 50)}</p>;
-    },
+    accessorKey: "intent_id",
+    header: "Payment Token",
   },
-  // {
-  //   accessorKey: "description",
-  //   header: "Description",
-  //   cell: ({ row }) => {
-  //     return <div>{row.original.?.slice(0, 50)}</div>;
-  //   },
-  // },
-
   {
     accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "time",
-    header: "Time",
-  },
-  {
-    accessorKey: "date",
-    header: "Booking At",
+    header: "Delivered",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date"));
+      const status = row.original.status;
+      return (
+        <p>
+          {status === "pending" ? (
+            <p className="text-red-400 bg-red-200 py-1 px-2 rounded-md hover:text-red-500 hover:bg-red-300">
+              Pending
+            </p>
+          ) : (
+            <Check className="text-green-600" />
+          )}
+        </p>
+      );
+    },
+  },
+  {
+    accessorKey: "products",
+    header: "Details",
+    cell: ({ row }) => {
+      const order = row.original;
+
+      return <OrderDetails order={order} />;
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Order Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("createdAt"));
       const formatted = date.toLocaleDateString();
       return <div className="font-medium">{formatted}</div>;
     },
@@ -81,7 +91,7 @@ export const columns: ColumnDef<any>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const service = row.original;
+      const order = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -93,21 +103,11 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(service.id)}
+              onClick={() => navigator.clipboard.writeText(order.id)}
             >
-              Copy Booking ID
+              Copy Order ID
             </DropdownMenuItem>
-            <Link href={`/customer/booking-history/edit/${service.id}`}>
-              <DropdownMenuItem>Update</DropdownMenuItem>
-            </Link>
-            {/* <DropdownMenuItem> */}
-            {/* <DialogCloseButton
-                handleDelete={() => deleteService(service.id)}
-              /> */}
-            {/* </DropdownMenuItem> */}
             <DropdownMenuSeparator />
-
-            {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -1,6 +1,6 @@
-import { MenuType } from "@/types/types";
 import { getAllData } from "@/lib/utils";
 import CreateProduct from "./product-page";
+import { MenuType } from "@/types/types";
 
 export default async function Page() {
   const category: MenuType = await getAllData("category");

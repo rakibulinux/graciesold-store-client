@@ -9,18 +9,14 @@ import { useSession } from "next-auth/react";
 import { ModeToggle } from "../mode-toggle";
 import { DropdownMenuItems } from "../dropdown-menu";
 import CartIcon from "../product/CartIcon";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 const navItems = [
   { name: "HOME", url: "/" },
   { name: "MENU", url: "/menu" },
   { name: "CONTACT", url: "/contact" },
 ];
 
-interface NavData {
-  data?: IUser;
-}
-
-const Navbar = ({ data }: NavData) => {
+const Navbar = ({ user }: { user?: User }) => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
@@ -73,7 +69,7 @@ const Navbar = ({ data }: NavData) => {
             </li>
             <div className="flex">
               {session ? (
-                <DropdownMenuItems data={data?.data!} />
+                <DropdownMenuItems user={user!} />
               ) : (
                 <>
                   <Link
@@ -120,7 +116,7 @@ const Navbar = ({ data }: NavData) => {
             <div className="sm:flex sm:gap-4">
               <div className="hidden sm:flex">
                 {session ? (
-                  <DropdownMenuItems data={data?.data!} />
+                  <DropdownMenuItems user={user!} />
                 ) : (
                   <>
                     <Link

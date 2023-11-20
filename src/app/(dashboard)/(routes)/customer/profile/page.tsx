@@ -3,15 +3,16 @@ import { User2 } from "lucide-react";
 import { cn, getData } from "@/lib/utils";
 import { Heading } from "@/components/heading";
 import Profile from "@/components/profile/profile";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
 
 const ProfilePage = async () => {
   const session = await getServerAuthSession();
-  const data: IUser = await getData(
+  const data: User = await getData(
     "users/me",
     session?.backendTokens?.accessToken!
   );
+
   return (
     <div>
       <Heading
@@ -29,7 +30,7 @@ const ProfilePage = async () => {
               "p-8 w-full flex items-start gap-x-8 rounded-lg bg-white border border-black/10 bg-muted"
             )}
           >
-            <Profile user={data?.data} />
+            <Profile user={data} />
           </div>
         </div>
       </div>

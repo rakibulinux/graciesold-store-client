@@ -3,9 +3,9 @@ import { DropdownMenuItems } from "../dropdown-menu";
 
 import { useSession } from "next-auth/react";
 import { MobileSidebar } from "./mobile-sidebar";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 
-export const DashboardNavbar = ({ data }: IUser) => {
+export const DashboardNavbar = ({ user }: { user: User }) => {
   const { data: session } = useSession();
   return (
     <div className="flex items-center p-4">
@@ -13,7 +13,7 @@ export const DashboardNavbar = ({ data }: IUser) => {
       <div className="flex w-full justify-end">
         {session?.user.role && (
           <>
-            <DropdownMenuItems data={data} />
+            <DropdownMenuItems user={user} />
           </>
         )}
       </div>

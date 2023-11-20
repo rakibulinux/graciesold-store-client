@@ -33,7 +33,7 @@ export const columns: ColumnDef<ProductType>[] = [
       const product = row.original;
       return (
         <Image
-          src={Backend_URL + product.images[0].path} // Make sure "image" is a valid path to your image
+          src={Backend_URL + product?.images[0]?.path} // Make sure "image" is a valid path to your image
           alt={product.name} // Use the appropriate alt text
           width={100} // Customize the width of the image
           height={100} // Customize the height of the image

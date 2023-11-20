@@ -1,5 +1,5 @@
 "use server";
-import { PackageSearch, Repeat } from "lucide-react";
+import { PackageSearch } from "lucide-react";
 
 import { DataTable } from "@/components/data-table";
 import { Heading } from "@/components/heading";

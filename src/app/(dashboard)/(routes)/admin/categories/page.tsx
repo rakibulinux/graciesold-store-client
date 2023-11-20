@@ -10,25 +10,6 @@ import { MenuType } from "@/types/types";
 import { getAllData } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 
-const data = [
-  {
-    name: "Order 1",
-    status: "Pending",
-  },
-  {
-    name: "Order 2",
-    status: "Shipped",
-  },
-  {
-    name: "Order 3",
-    status: "Delivered",
-  },
-  {
-    name: "Order 4",
-    status: "Pending",
-  },
-];
-
 const CategoryListPage = async () => {
   const category: MenuType = await getAllData("category");
   revalidateTag("collection");

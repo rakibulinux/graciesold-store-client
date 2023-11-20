@@ -4,12 +4,11 @@ import { Heading } from "@/components/heading";
 import { cn, getData } from "@/lib/utils";
 import Profile from "@/components/profile/profile";
 import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 
 const ProfilePage = async () => {
   const session = await getServerAuthSession();
-
-  const data: IUser = await getData(
+  const data: User = await getData(
     "users/me",
     session?.backendTokens?.accessToken!
   );
@@ -30,7 +29,7 @@ const ProfilePage = async () => {
               "p-8 w-full flex items-start gap-x-8 rounded-lg bg-white border border-black/10 bg-muted"
             )}
           >
-            <Profile user={data.data} />
+            <Profile user={data} />
           </div>
         </div>
       </div>

@@ -2,11 +2,11 @@ import { Sidebar } from "@/components/dashboard/sidebar";
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 import { getServerAuthSession } from "../api/auth/[...nextauth]/route";
 import { getData } from "@/lib/utils";
-import { IUser } from "@/interface/userProfile";
+import { User } from "@/types/types";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerAuthSession();
-  const userProfile: IUser = await getData(
+  const userProfile: User = await getData(
     "users/me",
     session?.backendTokens?.accessToken!
   );
@@ -16,7 +16,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         <Sidebar />
       </div>
       <main className="md:pl-72 pb-2">
-        <DashboardNavbar data={userProfile.data} />
+        <DashboardNavbar user={userProfile} />
         {children}
       </main>
     </div>
