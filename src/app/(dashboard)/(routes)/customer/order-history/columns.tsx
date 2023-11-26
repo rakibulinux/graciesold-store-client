@@ -34,7 +34,7 @@ export const columns: ColumnDef<OrderType>[] = [
       const order = row.original;
       return (
         <div>
-          {!order.paymentStatus ? (
+          {order.paymentStatus ? (
             <Check className="text-green-600" />
           ) : (
             <Link

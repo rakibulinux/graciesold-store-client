@@ -50,15 +50,17 @@ export const authOptions: NextAuthOptions = {
           },
         });
         const user = await res.json();
+        console.log(user);
         if (user?.error?.code === 404000) {
           throw Error(`User Doesn't exist in databases`);
-        } else if (user?.data?.user?.isEmailVerified === false) {
-          throw Error("Email is not verified. Please verify your email.");
-        } else if (res?.status == 401) {
-          throw Error("Credentials doesn't match!");
-        } else {
-          return user.data;
         }
+        if (user?.error?.code === 400020) {
+          throw Error("Email is not verified. Please verify your email.");
+        }
+        if (user?.error?.code === 401000) {
+          throw Error("Unauthorized: Invalid credentials");
+        }
+        return user.data;
       },
     }),
   ],

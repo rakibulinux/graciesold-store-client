@@ -6,11 +6,38 @@ import { Heading } from "@/components/heading";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { columns } from "./columns";
-import { getAllData } from "@/lib/utils";
+import { getQueryData } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
+import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/route";
 
-const ProductListPage = async () => {
-  const products = await getAllData("product");
+const ProductListPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const [field, order] =
+    typeof searchParams.sort === "string"
+      ? searchParams.sort.split(".")
+      : ["createdAt", "desc"]; // Provide default values
+  const orderBy = { [field]: order };
+  const page =
+    typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+  const perPage = searchParams["per_page"] ?? "10";
+  const searchValue =
+    typeof searchParams.search === "string" ? searchParams.search : undefined;
+
+  const where = {}; // Use an object for the where parameter
+  const session = await getServerAuthSession();
+  const products = await getQueryData({
+    url: "product",
+    token: session?.backendTokens.accessToken,
+    page,
+    perPage,
+    searchValue,
+    where,
+    orderBy,
+  });
+  console.log(products);
   revalidateTag("collection");
   return (
     <div className="w-11/12 mx-auto">
@@ -34,7 +61,20 @@ const ProductListPage = async () => {
           </Link>
         </div>
       </div>
-      <DataTable columns={columns} data={products || []} />
+      <DataTable
+        columns={columns}
+        data={products}
+        searchableColumns={[
+          {
+            id: "name",
+            title: "Name",
+          },
+          {
+            id: "availability",
+            title: "Availability",
+          },
+        ]}
+      />
     </div>
   );
 };

@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Backend_URL } from "./Constants";
 import { productData } from "@/constants/data";
+import { number } from "zod";
+import { OrderBy } from "@/types/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -87,25 +89,175 @@ export async function deleteData<T>(
     throw error; // Rethrow the error for further handling or logging
   }
 }
-export async function getData<T>(url: string, token?: string): Promise<T> {
+
+// `${Backend_URL}/${url}?page=${page}&perPage=${perPage}&searchValue=${searchValue}&where=email:${where}`,
+// export async function getData<T>(
+//   url: string,
+//   token?: string,
+//   page?: number,
+//   perPage?: number,
+//   searchValue?: string,
+//   where?: any
+// ): Promise<T> {
+//   console.log(Backend_URL + url);
+//   try {
+//     const response = await fetch(
+//       `${Backend_URL}/${url}?page=${page}&perPage=${perPage}&searchValue=${searchValue}&where=role:${where}`,
+//       {
+//         headers: {
+//           "Content-Type": "application/json", // Adjust the content type as needed
+//           authorization: `Bearer ${token}`,
+//         },
+//         next: { tags: ["collection"] },
+//       }
+//     );
+
+//     // if (!response.ok) {
+//     //   // Handle non-successful responses here (e.g., check for status code and throw an error)
+//     //   throw new Error(`HTTP error! Status: ${response.status}`);
+//     // }
+//     const responseData = await response.json(); // Parse the response JSON
+//     return responseData.data; // Return the parsed data
+//   } catch (error) {
+//     console.error("Error:", error);
+//     throw error; // Rethrow the error for further handling or logging
+//   }
+// }
+
+export async function getData(
+  url: string,
+  token?: string,
+  page?: string | string[],
+  perPage?: string | string[],
+  searchValue?: string,
+  where?: any,
+  orderBy?: any
+): Promise<any> {
+  let apiUrl = `${Backend_URL}/${url}?`;
+
+  if (where) {
+    for (const key in where) {
+      if (where.hasOwnProperty(key)) {
+        const value =
+          typeof where[key] === "object"
+            ? JSON.stringify(where[key])
+            : where[key];
+        apiUrl += `where=${key}:${value}&`;
+      }
+    }
+  }
+  if (orderBy) {
+    for (const key in orderBy) {
+      if (orderBy.hasOwnProperty(key)) {
+        const value =
+          typeof orderBy[key] === "object"
+            ? JSON.stringify(orderBy[key])
+            : orderBy[key];
+        apiUrl += `orderBy=${key}:${value}&`;
+      }
+    }
+  }
+
+  if (page) {
+    apiUrl += `page=${page}&`;
+  }
+
+  if (perPage) {
+    apiUrl += `perPage=${perPage}&`;
+  }
+
+  if (searchValue) {
+    apiUrl += `searchValue=${searchValue}&`;
+  }
+
+  console.log(apiUrl);
+
   try {
-    const response = await fetch(`${Backend_URL}/${url}/`, {
+    const response = await fetch(apiUrl, {
       headers: {
-        "Content-Type": "application/json", // Adjust the content type as needed
+        "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
       },
       next: { tags: ["collection"] },
     });
 
-    // if (!response.ok) {
-    //   // Handle non-successful responses here (e.g., check for status code and throw an error)
-    //   throw new Error(`HTTP error! Status: ${response.status}`);
-    // }
-    const responseData = await response.json(); // Parse the response JSON
-    return responseData.data; // Return the parsed data
+    const responseData = await response.json();
+    return responseData.data;
   } catch (error) {
     console.error("Error:", error);
-    throw error; // Rethrow the error for further handling or logging
+    throw error;
+  }
+}
+export async function getQueryData({
+  url,
+  token,
+  page,
+  perPage,
+  searchValue,
+  where,
+  orderBy,
+}: {
+  url: string;
+  token?: string;
+  page?: any;
+  perPage?: any;
+  searchValue?: string;
+  where?: any;
+  orderBy?: any;
+}): Promise<any> {
+  let apiUrl = `${Backend_URL}/${url}?`;
+
+  if (where) {
+    for (const key in where) {
+      if (where.hasOwnProperty(key)) {
+        const value =
+          typeof where[key] === "object"
+            ? JSON.stringify(where[key])
+            : where[key];
+        apiUrl += `where=${key}:${value}&`;
+      }
+    }
+  }
+  if (orderBy) {
+    for (const key in orderBy) {
+      if (orderBy.hasOwnProperty(key)) {
+        const value =
+          typeof orderBy[key] === "object"
+            ? JSON.stringify(orderBy[key])
+            : orderBy[key];
+        apiUrl += `orderBy=${key}:${value}&`;
+      }
+    }
+  }
+
+  if (page) {
+    apiUrl += `page=${page}&`;
+  }
+
+  if (perPage) {
+    apiUrl += `perPage=${perPage}&`;
+  }
+
+  if (searchValue) {
+    apiUrl += `searchValue=${searchValue}&`;
+  }
+
+  console.log(apiUrl);
+
+  try {
+    const response = await fetch(apiUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      next: { tags: ["collection"] },
+    });
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
   }
 }
 
@@ -156,4 +308,15 @@ export function slugToTitle(slug: string) {
   const title = capitalizedWords.join(" ");
 
   return title;
+}
+
+export function parseOrderBy(sortString: string): OrderBy {
+  const [field, order] = sortString.split(".");
+  const orderObject: OrderBy = {};
+
+  if (field && order) {
+    orderObject[field] = order.toLowerCase() as "asc" | "desc";
+  }
+
+  return orderObject;
 }

@@ -33,14 +33,14 @@ const SignUp = () => {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
     try {
       const res = await fetch(`${Backend_URL}/auth/sign-up`, {
         method: "POST",
         body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
+          name: values.name,
+          email: values.email,
+          password: values.password,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -49,12 +49,21 @@ const SignUp = () => {
       if (res?.ok) {
         toast({
           title: "SignUp Successfully! Please Confirm Your Email",
-          description: `Your account is registered successfully. Please check your email ${data.email} to verify your account.`,
+          description: `Your account is registered successfully. Please check your email ${values.email} to verify your account.`,
           variant: "success",
         });
         router.push("/sign-in");
       }
+      const data = await res.json();
+      if (data?.error?.code === 409001) {
+        toast({
+          title: data?.error.message,
+          description: values.email,
+          variant: "destructive",
+        });
+      }
     } catch (error: any) {
+      console.log(error);
       toast({
         title: error.message,
         variant: "destructive",

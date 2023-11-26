@@ -14,8 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
-import Link from "next/link";
 import { Backend_URL } from "@/lib/Constants";
 import { User } from "@/types/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -66,7 +64,7 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
-      const date = new Date(row.original.profile.createdAt);
+      const date = new Date(row?.original?.profile?.createdAt);
       const formatted = date.toLocaleDateString();
       return <div className="font-medium">{formatted}</div>;
     },
