@@ -29,7 +29,6 @@ export async function postData<T>(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const responseData: T = await response.json(); // Parse the response JSON
-    console.log("responseData from utils", responseData);
     return responseData; // Return the parsed data
   } catch (error) {
     console.error("Error:", error);
@@ -57,7 +56,6 @@ export async function patchPutData<T>(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const responseData: T = await response.json(); // Parse the response JSON
-    console.log("responsePatchData from utils", responseData);
     return responseData; // Return the parsed data
   } catch (error) {
     console.error("Error:", error);
@@ -82,7 +80,6 @@ export async function deleteData<T>(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const responseData: T = await response.json(); // Parse the response JSON
-    console.log("responsePatchData from utils", responseData);
     return responseData; // Return the parsed data
   } catch (error) {
     console.error("Error:", error);
@@ -124,54 +121,8 @@ export async function deleteData<T>(
 //   }
 // }
 
-export async function getData(
-  url: string,
-  token?: string,
-  page?: string | string[],
-  perPage?: string | string[],
-  searchValue?: string,
-  where?: any,
-  orderBy?: any
-): Promise<any> {
-  let apiUrl = `${Backend_URL}/${url}?`;
-
-  if (where) {
-    for (const key in where) {
-      if (where.hasOwnProperty(key)) {
-        const value =
-          typeof where[key] === "object"
-            ? JSON.stringify(where[key])
-            : where[key];
-        apiUrl += `where=${key}:${value}&`;
-      }
-    }
-  }
-  if (orderBy) {
-    for (const key in orderBy) {
-      if (orderBy.hasOwnProperty(key)) {
-        const value =
-          typeof orderBy[key] === "object"
-            ? JSON.stringify(orderBy[key])
-            : orderBy[key];
-        apiUrl += `orderBy=${key}:${value}&`;
-      }
-    }
-  }
-
-  if (page) {
-    apiUrl += `page=${page}&`;
-  }
-
-  if (perPage) {
-    apiUrl += `perPage=${perPage}&`;
-  }
-
-  if (searchValue) {
-    apiUrl += `searchValue=${searchValue}&`;
-  }
-
-  console.log(apiUrl);
-
+export async function getData(url: string, token?: string): Promise<any> {
+  let apiUrl = `${Backend_URL}/${url}`;
   try {
     const response = await fetch(apiUrl, {
       headers: {
@@ -241,9 +192,7 @@ export async function getQueryData({
   if (searchValue) {
     apiUrl += `searchValue=${searchValue}&`;
   }
-
   console.log(apiUrl);
-
   try {
     const response = await fetch(apiUrl, {
       headers: {

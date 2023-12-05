@@ -1,7 +1,28 @@
+import { number } from "zod";
+
 export enum UserRole {
   "admin",
   "customer",
 }
+
+export interface Meta {
+  total: number | null;
+  lastPage: number | null;
+  currentPage: number | null;
+  perPage: number | null;
+  prev: number | null;
+  next: number | null;
+}
+
+export type Notification = {
+  id: string;
+  userId: string;
+  message: string;
+  type: string;
+  status: $Enums.notifyStatus;
+  createdAt: Date;
+  updatedAt?: Date;
+};
 
 export type Profile = {
   id: string;

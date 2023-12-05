@@ -1,6 +1,7 @@
 "use client";
 import Categories from "@/app/(dashboard)/(routes)/admin/categories/categories";
 import { Button } from "@/components/ui/button";
+import DebouncedInput from "@/hooks/use-debounce-data";
 import { CategoryType, MenuType } from "@/types/types";
 import React, { useState } from "react";
 
@@ -8,17 +9,19 @@ type Props = {
   categories: MenuType[];
   category: string;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
+  setGlobalFilter: (e: string) => void;
+  globalFilter: string;
+  resetFilter: any;
 };
 
-const DesktopFilter = ({ categories, category, setCategory }: Props) => {
-  //   const handleSearch = () => {
-  //     const filters = {
-  //       name: searchText,
-  //       category,
-  //       location,
-  //     };
-  //     onSearch(filters);
-  //   };
+const DesktopFilter = ({
+  categories,
+  category,
+  setCategory,
+  setGlobalFilter,
+  globalFilter,
+  resetFilter,
+}: Props) => {
   return (
     <div className="hidden lg:block bg-gray-100 h-fit rounded-xl">
       <div className=" p-6 rounded-xl max-w-[300px] w-full h-fit">
@@ -29,15 +32,14 @@ const DesktopFilter = ({ categories, category, setCategory }: Props) => {
           >
             Search by Food
           </label>
-          <input
-            id="searchQuery"
+          <DebouncedInput
+            value={globalFilter ?? ""}
+            onChange={(value) => setGlobalFilter(String(value))}
             placeholder="Search by food"
-            className="w-full py-2 px-4 rounded-full border border-gray-300 focus:outline-none focus:border-red-400"
-            type="text"
-            value=""
+            className="w-full rounded-full border border-gray-300 focus:outline-none focus:border-red-400"
           />
         </div>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label
             htmlFor="categoryFilter"
             className="block text-gray-600 font-semibold mb-2"
@@ -55,10 +57,9 @@ const DesktopFilter = ({ categories, category, setCategory }: Props) => {
                 {option.name}
               </option>
             ))}
-            {/* Add more categories */}
           </select>
         </div>
-        {/* <div className="mb-4">
+        <div className="mb-4">
           <label
             htmlFor="tagFilter"
             className="block text-gray-600 font-semibold mb-2"
@@ -99,6 +100,7 @@ const DesktopFilter = ({ categories, category, setCategory }: Props) => {
           </div>
         </div> */}
         <Button
+          onClick={resetFilter}
           variant="destructive"
           className="w-full rounded-full shadow-md mt-5"
         >

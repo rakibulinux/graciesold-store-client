@@ -17,11 +17,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnDef,
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-  VisibilityState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 import { useDebounce } from "@/hooks/use-debounce";
@@ -38,6 +38,7 @@ import { DataTablePagination } from "./data-table-pagination";
 import {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
+  Meta,
 } from "@/types/types";
 import { Input } from "./ui/input";
 import {
@@ -54,14 +55,7 @@ interface DataTableProps<TData, TValue> {
   data: {
     success: boolean;
     data: TData[];
-    meta: {
-      currentPage: number | null;
-      lastPage: number | null;
-      next: number | null;
-      perPage: number | null;
-      prev: number | null;
-      total: number | null;
-    };
+    meta: Meta;
   };
   filterableColumns?: DataTableFilterableColumn<TData>[];
   searchableColumns?: DataTableSearchableColumn<TData>[];
@@ -79,7 +73,7 @@ export function DataTable<TData, TValue>({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [searchParam, setSearchParam] = useSearchParams();
+
   // Search params
   const page = searchParams?.get("page") ?? "1";
   const pageAsNumber = Number(page);
@@ -148,14 +142,6 @@ export function DataTable<TData, TValue>({
       }
     );
   }, [createQueryString, pageIndex, pageSize, pathname, router]);
-
-  useEffect(() => {
-    router.push(
-      `${pathname}?${createQueryString({
-        search,
-      })}`
-    );
-  }, [createQueryString, search, router, pathname]);
 
   // Handle server-side sorting
   const [sorting, setSorting] = useState<SortingState>([
@@ -307,6 +293,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between">
         <div className="flex items-center py-4">
           <DebouncedInput
+            className="max-w-sm"
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
             placeholder="Search all columns..."

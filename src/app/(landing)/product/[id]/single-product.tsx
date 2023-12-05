@@ -10,12 +10,12 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Fade from "react-reveal/Fade";
 // import Carousel from "@/components/Carousel";
-interface ProductReview {
+interface IProductType {
   products: ProductType[];
   singleProduct: ProductType;
 }
 
-const SingleProduct = ({ products, singleProduct }: ProductReview) => {
+const SingleProduct = ({ products, singleProduct }: IProductType) => {
   return (
     <section className="min-h-screen">
       <div className="container py-5 lg:py-5 mx-auto max-w-[1200px]">
@@ -29,7 +29,7 @@ const SingleProduct = ({ products, singleProduct }: ProductReview) => {
                 autoPlay={true}
                 infiniteLoop={true}
                 showArrows={true}
-                showThumbs={true}
+                showThumbs={false}
               >
                 {singleProduct?.images.map((image, index) => (
                   <div key={index}>

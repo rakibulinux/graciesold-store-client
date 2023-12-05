@@ -20,7 +20,7 @@ const LandingPage = async () => {
       </section>
 
       <section className="relative my-10 overflow-hidden">
-        <div className="w-10/12 mx-auto my-4">
+        <div className="w-10/12 mx-auto mb-14">
           <div className="flex flex-col items-center justify-center space-y-4 md:space-y-0 md:items-center md:flex-row md:space-x-4 text-sky-650 my-10">
             <hr className="w-full md:w-52 h-1 bg-sky-650" />
             <span className="text-lg md:text-3xl font-bold">Photos</span>

@@ -37,7 +37,6 @@ const ProductListPage = async ({
     where,
     orderBy,
   });
-  console.log(products);
   revalidateTag("collection");
   return (
     <div className="w-11/12 mx-auto">

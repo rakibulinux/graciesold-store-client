@@ -7,6 +7,7 @@ import {
   Marker,
   Autocomplete,
 } from "@react-google-maps/api";
+import { Input } from "./ui/input";
 
 interface Location {
   lat: number;
@@ -106,7 +107,7 @@ const Map: React.FC = () => {
         onPlaceChanged={handlePlaceChanged}
         options={{ fields: ["address_components", "geometry", "name"] }}
       >
-        <input type="text" placeholder="Search for a location" />
+        <Input type="text" placeholder="Search for a location" />
       </Autocomplete>
 
       {/* map component  */}

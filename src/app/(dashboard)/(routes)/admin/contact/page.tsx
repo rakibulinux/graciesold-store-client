@@ -35,7 +35,6 @@ const OrderListPage = async ({
     where,
     orderBy,
   });
-  console.log(contact);
   revalidateTag("collection");
   return (
     <div className="w-11/12 mx-auto">

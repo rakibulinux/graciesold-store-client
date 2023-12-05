@@ -4,7 +4,7 @@ import Link from "next/link";
 const HeroCarousel = () => {
   return (
     <section
-      className={`relative bg-[url('/kima.jpg')] bg-cover bg-center bg-no-repeat  flex justify-center`}
+      className={`relative bg-[url('/hero_image.jpg')] bg-cover bg-center bg-no-repeat  flex justify-center`}
     >
       <div className="absolute inset-0 bg-black opacity-20"></div>
       <div className="absolute inset-0 bg-black opacity-20 sm:bg-transparent sm:from-black/95 sm:to-black/25 ltr:sm:bg-gradient-to-r rtl:sm:bg-gradient-to-l"></div>

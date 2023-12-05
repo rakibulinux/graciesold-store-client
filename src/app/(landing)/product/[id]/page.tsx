@@ -1,7 +1,7 @@
 import { getAllData, getSingleData } from "@/lib/utils";
 import { ProductType } from "@/types/types";
 
-import SingleProduct from "./review-page";
+import SingleProduct from "./single-product";
 import { revalidateTag } from "next/cache";
 
 const SingleProductPage = async ({ params }: { params: { id: string } }) => {

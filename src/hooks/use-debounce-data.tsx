@@ -32,14 +32,7 @@ const DebouncedInput: React.FC<DebouncedInputProps> = ({
     setValue(e.target.value);
   };
 
-  return (
-    <Input
-      className="max-w-sm"
-      {...props}
-      value={value}
-      onChange={handleChange}
-    />
-  );
+  return <Input {...props} value={value} onChange={handleChange} />;
 };
 
 export default DebouncedInput;

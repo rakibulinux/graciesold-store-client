@@ -24,7 +24,6 @@ const OrderListPage = async ({
   const perPage = searchParams["per_page"] ?? "10";
   const searchValue =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
-  console.log("searchValue", searchValue);
   const session = await getServerAuthSession();
   const where = { userId: session?.user.id }; // Use an object for the where parameter
   const orders = await getQueryData({

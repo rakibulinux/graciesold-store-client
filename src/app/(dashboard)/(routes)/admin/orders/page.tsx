@@ -17,7 +17,6 @@ const OrderListPage = async ({
     typeof searchParams.sort === "string"
       ? searchParams.sort.split(".")
       : ["createdAt", "desc"]; // Provide default values
-  console.log("searchParams", searchParams);
   const page =
     typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
   const perPage = searchParams["per_page"] ?? "10";
@@ -36,7 +35,6 @@ const OrderListPage = async ({
       where,
       orderBy,
     });
-    console.log(data);
 
     return (
       <div className="w-11/12 mx-auto">

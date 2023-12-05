@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-export default function Carousel({
+export default function OwnCarousel({
   autoSlide = false,
   autoSlideInterval = 3000,
   slides,

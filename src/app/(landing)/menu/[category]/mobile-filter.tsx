@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import DebouncedInput from "@/hooks/use-debounce-data";
 import { MenuType } from "@/types/types";
 import { Filter } from "lucide-react";
 import React, { useState } from "react";
@@ -8,8 +9,16 @@ type Props = {
   categories: MenuType[];
   category: string;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
+  setGlobalFilter: (e: string) => void;
+  globalFilter: string;
 };
-const MobileFilter = ({ categories, setCategory, category }: Props) => {
+const MobileFilter = ({
+  categories,
+  setCategory,
+  setGlobalFilter,
+  globalFilter,
+  category,
+}: Props) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const toggleFilter = () => {
@@ -34,14 +43,14 @@ const MobileFilter = ({ categories, setCategory, category }: Props) => {
               >
                 Search by Food
               </label>
-              <input
-                id="searchQuery"
+              <DebouncedInput
+                value={globalFilter ?? ""}
+                onChange={(value) => setGlobalFilter(String(value))}
                 placeholder="Search by food"
-                className="w-full py-2 px-4 rounded-full border border-gray-300 focus:outline-none focus:border-red-400"
-                type="text"
-                value=""
+                className="w-full rounded-full border border-gray-300 focus:outline-none focus:border-red-400"
               />
             </div>
+            {/* 
             <div className="mb-4">
               <label
                 htmlFor="categoryFilter"
@@ -62,10 +71,9 @@ const MobileFilter = ({ categories, setCategory, category }: Props) => {
                     {option.name}
                   </option>
                 ))}
-                {/* Add more categories */}
               </select>
             </div>
-            {/* <div className="mb-4">
+            <div className="mb-4">
               <label
                 htmlFor="tagFilter"
                 className="block text-gray-600 font-semibold mb-2"
