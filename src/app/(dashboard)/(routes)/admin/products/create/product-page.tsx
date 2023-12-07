@@ -50,7 +50,7 @@ const CreateProduct = ({ category }: any) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [images, setImages] = useState<FileList | null>(null);
 
-  const getCatSlug: CategoryType = category.find(
+  const getCatSlug: CategoryType = category?.find(
     (cat: { id: string }) => cat.id === selectedCategory
   );
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +184,7 @@ const CreateProduct = ({ category }: any) => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                         disabled={!isValid || isSubmitting}
                         placeholder="name"
                         {...field}
@@ -206,7 +206,7 @@ const CreateProduct = ({ category }: any) => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                         disabled={!isValid || isSubmitting}
                         placeholder="price"
                         {...field}

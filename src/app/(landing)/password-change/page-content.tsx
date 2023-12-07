@@ -118,7 +118,7 @@ const ChangePassword = ({ className, ...props }: CardProps) => {
                       label="Password"
                       error={errors.password?.message}
                       type={showPass ? "text" : "password"}
-                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                       disabled={isLoading}
                       placeholder="Password"
                       {...field}
@@ -142,7 +142,7 @@ const ChangePassword = ({ className, ...props }: CardProps) => {
                       label="Confirm Password"
                       error={errors.confirmPassword?.message}
                       type={showPass ? "text" : "password"}
-                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                       disabled={isLoading}
                       placeholder="Confirm Password"
                       {...field}
