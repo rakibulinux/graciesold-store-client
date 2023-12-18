@@ -89,7 +89,7 @@ const ForgotPasswordPage = ({ className, ...props }: CardProps) => {
                     <Input
                       error={form.formState.errors.email?.message}
                       label="Email"
-                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                       disabled={isLoading}
                       placeholder="Email"
                       {...field}

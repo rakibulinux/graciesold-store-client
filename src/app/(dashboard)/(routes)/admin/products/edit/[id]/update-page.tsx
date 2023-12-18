@@ -104,7 +104,7 @@ const UpdateProduct = ({ product }: any) => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                         disabled={!isValid || isSubmitting}
                         placeholder="name"
                         {...field}
@@ -127,7 +127,7 @@ const UpdateProduct = ({ product }: any) => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                        className="outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                         disabled={!isValid || isSubmitting}
                         placeholder="price"
                         {...field}
