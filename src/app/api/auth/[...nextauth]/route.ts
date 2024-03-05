@@ -50,7 +50,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
         const user = await res.json();
-        console.log(user);
         if (user?.error?.code === 404000) {
           throw Error(`User Doesn't exist in databases`);
         }

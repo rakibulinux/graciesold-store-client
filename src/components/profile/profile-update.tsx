@@ -1,10 +1,15 @@
 "use client";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FileUpload } from "./../file-upload";
 
+import { Backend_URL } from "@/lib/Constants";
+import { patchPutData } from "@/lib/utils";
+import { Profile } from "@/types/types";
+import { useSession } from "next-auth/react";
+import { Textarea } from "../ui/textarea";
+import { toast } from "../ui/use-toast";
+import { Button } from "./../ui/button";
 import {
   Form,
   FormControl,
@@ -14,16 +19,7 @@ import {
 } from "./../ui/form";
 import { Input } from "./../ui/input";
 import { Label } from "./../ui/label";
-import { Button } from "./../ui/button";
-import { Editor } from "../quil/editor";
-import { toast } from "../ui/use-toast";
-import { useSession } from "next-auth/react";
-import { patchPutData, postData } from "@/lib/utils";
-import { Backend_URL } from "@/lib/Constants";
-import UploadImage from "../category/UploadImage";
-import { Textarea } from "../ui/textarea";
 import UploadProfileImage from "./UploadProfileImage";
-import { Profile } from "@/types/types";
 
 type FormValues = {
   address: string;
@@ -103,7 +99,6 @@ const ProfileUpdate = ({ user, urlPath }: IProfileUpdateProps) => {
 
     const formData = new FormData();
     const profileId = id;
-    console.log(profileId);
     formData.append("file", selectedFile);
     formData.append("profileId", profileId);
 

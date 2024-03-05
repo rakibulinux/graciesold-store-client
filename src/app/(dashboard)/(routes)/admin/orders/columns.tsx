@@ -3,10 +3,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { ArrowUpDown, Check, MoreHorizontal, X } from "lucide-react";
+import { Check, MoreHorizontal, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import OrderDetails from "@/components/order-details";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,14 +16,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
-import Link from "next/link";
-import { OrderType } from "@/types/types";
-import { Backend_URL } from "@/lib/Constants";
-import { Badge } from "@/components/ui/badge";
-import OrderDetails from "@/components/order-details";
-import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import { Backend_URL } from "@/lib/Constants";
+import { OrderType } from "@/types/types";
+import { useSession } from "next-auth/react";
 
 export const columns: ColumnDef<OrderType>[] = [
   {
@@ -74,7 +71,6 @@ export const columns: ColumnDef<OrderType>[] = [
       };
 
       const handleUpdate = async (status: string, id: string) => {
-        console.log(id, status);
         await mutation(id, status);
 
         toast({
