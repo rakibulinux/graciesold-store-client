@@ -85,7 +85,7 @@ const ForgotPasswordPage = ({ className, ...props }: CardProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
                       error={form.formState.errors.email?.message}
                       label="Email"

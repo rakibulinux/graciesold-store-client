@@ -62,75 +62,73 @@ const SignIn = () => {
     }
   };
   return (
-    <section className="relative flex flex-wrap min-h-screen lg:items-center">
+    <section className="relative flex flex-wrap lg:items-center">
       <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
         <div className="text-white mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-bold sm:text-3xl">Welcome Back!</h1>
         </div>
 
-        <div>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="
               mx-auto mb-0 mt-8 max-w-md space-y-4
               "
+          >
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-10">
+                  <FormControl>
+                    <Input
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                      disabled={isLoading}
+                      placeholder="Email"
+                      {...field}
+                      type="email"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-10">
+                  <FormControl>
+                    <Input
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                      disabled={isLoading}
+                      placeholder="Password"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button
+              className=" col-span-12 lg:col-span-2 w-full"
+              type="submit"
+              disabled={isLoading}
+              size="icon"
             >
-              <FormField
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-10">
-                    <FormControl className="m-0 p-0">
-                      <Input
-                        className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                        disabled={isLoading}
-                        placeholder=" Email"
-                        {...field}
-                        type="email"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-10">
-                    <FormControl className="m-0 p-0">
-                      <Input
-                        className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                        disabled={isLoading}
-                        placeholder=" Password"
-                        {...field}
-                        type="password"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <Button
-                className=" col-span-12 lg:col-span-2 w-full"
-                type="submit"
-                disabled={isLoading}
-                size="icon"
-              >
-                SignIn
-              </Button>
-              <p className="text-sm text-center text-gray-500">
-                no account?
-                <Link className="underline ml-2" href="/sign-up">
-                  Sign Up
-                </Link>
-              </p>
-              <Link className="underline ml-2" href="/forgot-password">
-                Forgot Password?
+              SignIn
+            </Button>
+            <p className="text-sm text-center text-gray-500">
+              no account?
+              <Link className="underline ml-2" href="/sign-up">
+                Sign Up
               </Link>
-            </form>
-          </Form>
-        </div>
+            </p>
+            <Link className="underline ml-2" href="/forgot-password">
+              Forgot Password?
+            </Link>
+          </form>
+        </Form>
       </div>
 
-      <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+      <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2 md:items-center md:justify-center flex">
         <Image src={loginImage} width={500} alt="login image" />
       </div>
     </section>

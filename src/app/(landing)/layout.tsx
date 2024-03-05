@@ -2,12 +2,12 @@ import { getServerSession } from "next-auth";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import { User } from "@/types/types";
-import { getData } from "@/lib/utils";
+import { getData, getUser } from "@/lib/utils";
 import { getServerAuthSession } from "../api/auth/[...nextauth]/route";
 
 const LandingLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerAuthSession();
-  const userProfile: User = await getData(
+  const userProfile: User = await getUser(
     "users/me",
     session?.backendTokens?.accessToken!
   );

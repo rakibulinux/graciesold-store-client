@@ -3,16 +3,15 @@ import { DropdownMenuItems } from "../dropdown-menu";
 
 import { useSession } from "next-auth/react";
 import { MobileSidebar } from "./mobile-sidebar";
-import { User } from "@/types/types";
+import { Notification, User } from "@/types/types";
 import { useEffect, useState } from "react";
-import { getData, getQueryData } from "@/lib/utils";
-import Notification from "./Notification";
+import { getQueryData } from "@/lib/utils";
+import Notifications from "./Notifications";
 import { io } from "socket.io-client";
-import Notifications from "./Notification";
-// ... (imports)
+import { ModeToggle } from "../mode-toggle";
 
 export const DashboardNavbar = ({ user }: { user: User }) => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isSocketConnected, setIsSocketConnected] = useState(false); // New state to track socket connection
   const [notificationStatus, setNotificationStatus] = useState(); // New state to track socket connection
   const { data: session } = useSession();
@@ -22,87 +21,67 @@ export const DashboardNavbar = ({ user }: { user: User }) => {
     positiveNotification = new Audio("/music/notification.mp3");
   }
 
+  const fetchNotifications = async () => {
+    const { data } = await getQueryData({
+      url: `notification`,
+      token: session?.backendTokens.accessToken,
+      where,
+      orderBy: { createdAt: "desc" },
+    });
+    setNotifications(data);
+  };
   useEffect(() => {
-    // Create a socket connection
-    const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
+    fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, notificationStatus]);
 
-    // Listen for incoming messages
+  useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET!);
+    const handleConnect = () => {
+      setIsSocketConnected(true);
+    };
+
+    const handleDisconnect = () => {
+      setIsSocketConnected(false);
+    };
+
     socket.on("findAllNotification", (notification) => {
-      console.log(notification);
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         notification,
       ]);
     });
 
-    // Clean up the socket connection on unmount
+    const handleNewOrder = (notification: Notification[]) => {
+      console.log("New Order:", notification);
+      setNotifications(
+        (prevOrder) => [...prevOrder, notification] as Notification[]
+      );
+      try {
+        // Play notification sound
+        // if (positiveNotification) {
+        positiveNotification!.play();
+        console.log("I called play", positiveNotification);
+        // }
+      } catch (error) {
+        console.error("Error playing notification sound:", error);
+      }
+
+      setNotifications(notification);
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("newOrder", handleNewOrder);
+
     return () => {
       socket.disconnect();
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("newOrder", handleNewOrder);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // const fetchNotifications = async () => {
-  //   const { data } = await getQueryData({
-  //     url: `notification`,
-  //     token: session?.backendTokens.accessToken,
-  //     where,
-  //     orderBy: { createdAt: "desc" },
-  //   });
-  //   setNotifications(data);
-  // };
-  // useEffect(() => {
-  //   fetchNotifications();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [session, notificationStatus]);
-
-  // useEffect(() => {
-  //   const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
-
-  //   const handleConnect = () => {
-  //     console.log("Socket connected");
-  //     setIsSocketConnected(true);
-  //   };
-
-  //   const handleDisconnect = () => {
-  //     console.log("Socket disconnected");
-  //     setIsSocketConnected(false);
-  //   };
-
-  //   socket.on("findAllNotification", (notification) => {
-  //     console.log("notification", notification);
-  //     // setNotifications((prevNotifications) => [
-  //     //   ...prevNotifications,
-  //     //   notification,
-  //     // ]);
-  //   });
-
-  //   const handleNewOrder = (order) => {
-  //     console.log("New Order:", order);
-  //     setNotifications((prevorder) => [...prevorder, order]);
-  //     try {
-  //       // Play notification sound
-  //       // if (positiveNotification) {
-  //       positiveNotification!.play();
-  //       console.log("I called play", positiveNotification);
-  //       // }
-  //     } catch (error) {
-  //       console.error("Error playing notification sound:", error);
-  //     }
-
-  //     setNotifications(order);
-  //   };
-
-  //   socket.on("connect", handleConnect);
-  //   socket.on("disconnect", handleDisconnect);
-  //   socket.on("newOrder", handleNewOrder);
-
-  //   return () => {
-  //     socket.disconnect();
-  //     socket.off("connect", handleConnect);
-  //     socket.off("disconnect", handleDisconnect);
-  //     socket.off("newOrder", handleNewOrder);
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   return (
     <div className="flex items-center p-4">
@@ -119,7 +98,8 @@ export const DashboardNavbar = ({ user }: { user: User }) => {
               </>
             )}
             <DropdownMenuItems user={user} />
-            <p>{isSocketConnected ? "Connected" : "Not connected"}</p>
+            {/* <p>{isSocketConnected ? "Connected" : "Disconnected"}</p> */}
+            <ModeToggle />
           </div>
         )}
       </div>

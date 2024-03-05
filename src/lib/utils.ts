@@ -8,7 +8,26 @@ import { OrderBy } from "@/types/types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+export async function getUser(url: string, token: string): Promise<any> {
+  let apiUrl = `${Backend_URL}/${url}`;
+  if (!!token) {
+    try {
+      const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        next: { tags: ["collection"] },
+      });
 
+      const responseData = await response.json();
+      return responseData.data;
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+}
 export async function postData<T>(
   url: string,
   data: Record<string, any>,
@@ -192,7 +211,6 @@ export async function getQueryData({
   if (searchValue) {
     apiUrl += `searchValue=${searchValue}&`;
   }
-  console.log(apiUrl);
   try {
     const response = await fetch(apiUrl, {
       headers: {

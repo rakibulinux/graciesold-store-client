@@ -113,7 +113,7 @@ const ChangePassword = ({ className, ...props }: CardProps) => {
               name="password"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
                       label="Password"
                       error={errors.password?.message}
@@ -137,7 +137,7 @@ const ChangePassword = ({ className, ...props }: CardProps) => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
                       label="Confirm Password"
                       error={errors.confirmPassword?.message}

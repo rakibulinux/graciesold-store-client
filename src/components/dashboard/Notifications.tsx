@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  MouseEvent,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Bell } from "lucide-react";
 import NotificationsList from "./NotificationsList";
 import { Notification } from "@/types/types";
@@ -13,16 +7,12 @@ import { Button } from "../ui/button";
 interface NotificationComponentProps {
   notifications: Notification[];
   setNotificationStatus: any;
-  hasMore?: any;
-  fetchNotifications?: any;
 }
 
-const NotificationComponent: React.FC<NotificationComponentProps> = ({
+const Notifications = ({
   notifications,
   setNotificationStatus,
-  hasMore,
-  fetchNotifications,
-}) => {
+}: NotificationComponentProps) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +21,7 @@ const NotificationComponent: React.FC<NotificationComponentProps> = ({
   };
 
   const handleClickOutside = useCallback(
-    (event: MouseEvent) => {
+    (event: globalThis.MouseEvent) => {
       if (
         showNotifications &&
         notificationRef.current &&
@@ -42,17 +32,25 @@ const NotificationComponent: React.FC<NotificationComponentProps> = ({
     },
     [showNotifications]
   );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   const unReadNotification: Notification[] = notifications?.filter(
     (notification) => notification.status === "UNREAD"
   );
   return (
     <div className="relative" ref={notificationRef}>
       <Button
-        variant="outline"
+        variant="ghost"
         className="relative"
         onClick={handleNotificationClick}
       >
-        <span className="bg-white  border p-0.5 border-black-100 rounded-full  absolute right-1 bottom-5">
+        <span className="bg-red-500 w-5 h-5   border rounded-full text-white absolute right-2 bottom-6">
           {unReadNotification?.length}
         </span>
         <Bell />
@@ -63,14 +61,11 @@ const NotificationComponent: React.FC<NotificationComponentProps> = ({
           <NotificationsList
             notifications={notifications}
             setNotificationStatus={setNotificationStatus}
-            hasMore={hasMore}
-            fetchNotifications={fetchNotifications}
           />
-          {!notifications?.length && <div>No notifications</div>}
         </div>
       )}
     </div>
   );
 };
 
-export default NotificationComponent;
+export default Notifications;

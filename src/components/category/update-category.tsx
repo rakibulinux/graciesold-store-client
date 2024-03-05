@@ -77,7 +77,7 @@ const UpdateCategory = ({ category }: CategoryValues) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="col-span-12 lg:col-span-10">
-                    <FormControl className="m-0 p-0">
+                    <FormControl>
                       <Input
                         className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
                         disabled={isLoading}

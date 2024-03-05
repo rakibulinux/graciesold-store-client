@@ -71,7 +71,7 @@ const SignUp = () => {
     }
   };
   return (
-    <section className="relative flex flex-wrap min-h-screen lg:items-center">
+    <section className="relative flex flex-wrap lg:items-center">
       <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
         <div className="text-white mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-bold sm:text-3xl">Get started today!</h1>
@@ -88,9 +88,9 @@ const SignUp = () => {
               name="name"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
-                      className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent "
                       disabled={isLoading}
                       placeholder="Name"
                       {...field}
@@ -104,9 +104,9 @@ const SignUp = () => {
               name="email"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
-                      className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                       disabled={isLoading}
                       placeholder="Email"
                       {...field}
@@ -116,14 +116,13 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
-
             <FormField
               name="password"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-10">
-                  <FormControl className="m-0 p-0">
+                  <FormControl>
                     <Input
-                      className=" outline-none focus-visible:ring-0 focus-visible:ring-transparent pl-2"
+                      className="outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                       disabled={isLoading}
                       placeholder="Password"
                       {...field}
@@ -151,7 +150,7 @@ const SignUp = () => {
         </Form>
       </div>
 
-      <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+      <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2 md:items-center md:justify-center flex">
         <Image src={loginImage} width={500} alt="login image" />
       </div>
     </section>

@@ -15,7 +15,7 @@ import { signOut, useSession } from "next-auth/react";
 import { Backend_URL } from "@/lib/Constants";
 import { User } from "@/types/types";
 
-export function DropdownMenuItems({ user }: { user: User }) {
+export function DropdownMenuItems({ user }: { user?: User }) {
   const { data: session } = useSession();
   const signOutUser = async () => {
     await fetch(`${Backend_URL}/auth/logout`, {
@@ -48,12 +48,12 @@ export function DropdownMenuItems({ user }: { user: User }) {
         {/* <DropdownMenuItem onChange={() => setTheme()}>Light</DropdownMenuItem>
         <DropdownMenuItem onChange={setTheme}>Dark</DropdownMenuItem> */}
 
-        <DropdownMenuItem>
-          <Link href={`/${session?.user?.role}/`}>Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href={`/${session?.user?.role}/settings`}>Settings</Link>
-        </DropdownMenuItem>
+        <Link href={`/${session?.user?.role}/`}>
+          <DropdownMenuItem>Dashboard</DropdownMenuItem>
+        </Link>
+        <Link href={`/${session?.user?.role}/settings`}>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+        </Link>
         <DropdownMenuItem onClick={signOutUser}>SignOut</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

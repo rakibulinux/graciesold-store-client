@@ -1,24 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import { TbLetterO, TbLetterQ, TbLetterS } from "react-icons/tb";
+
 import { Notification } from "@/types/types";
-import { Button } from "../ui/button";
 import ReactTimeago from "react-timeago";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { Button } from "../ui/button";
+import { io } from "socket.io-client";
 
 const NotificationsList = ({
   notifications,
   setNotificationStatus,
-  hasMore,
-  fetchNotifications,
 }: {
   notifications: Notification[];
   setNotificationStatus: any;
-  hasMore: any;
-  fetchNotifications: any;
 }) => {
+  const socket = io(process.env.NEXT_PUBLIC_SOCKET!);
   const [activeTab, setActiveTab] = useState("all");
-
+  const readNotification = (id: string) => {
+    console.log(id, socket.id);
+    socket.emit("updateNotification", { id, clientSocketId: socket.id });
+  };
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
@@ -26,10 +26,9 @@ const NotificationsList = ({
   const isTabActive = (tab: string) => {
     return activeTab === tab;
   };
-  console.log(notifications);
   return (
     <>
-      <section className="bg-white border-2 shadow-2xl">
+      <section className="bg-white dark:bg-gray-800 border-2 shadow-2xl">
         {/* <div className="grid grid-cols-1 px-10 py-4 items-center">
           <h1 className="text-lg text-center md:text-3xl">Notifications</h1>
           <div className="flex justify-center">
@@ -42,7 +41,8 @@ const NotificationsList = ({
           </div>
         </div> */}
         <div className="flex justify-center space-x-3 border-b p-2">
-          <button
+          <Button
+            variant="ghost"
             className={`p-1  ${
               isTabActive("all") &&
               "border-b-2 border-green-600 text-green-700 bg-green-50"
@@ -50,8 +50,9 @@ const NotificationsList = ({
             onClick={() => (handleTabChange("all"), setNotificationStatus(""))}
           >
             All
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             className={`p-1  ${
               isTabActive("read") &&
               "border-b-2 border-green-600 text-green-700 bg-green-50"
@@ -61,8 +62,9 @@ const NotificationsList = ({
             )}
           >
             Read
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             className={`p-1  ${
               isTabActive("unread") &&
               "border-b-2 border-green-600 text-green-700 bg-green-50"
@@ -72,55 +74,32 @@ const NotificationsList = ({
             )}
           >
             Unread
-          </button>
+          </Button>
         </div>
         <div className="p-4 max-h-[80vh] space-y-3 overflow-y-auto scrollbar-hide">
-          <InfiniteScroll
-            dataLength={notifications.length}
-            next={fetchNotifications}
-            hasMore={hasMore}
-            loader={<h4 className="text-2xl">Loading...</h4>}
-          >
-            {notifications.map((notification) => (
-              <div
-                className="flex items-center space-x-2"
-                key={notification.id}
-              >
-                <div>
-                  <button
-                    className={`p-2 text-white rounded-full ${
-                      (notification.type === "READ" && "bg-purple-700") ||
-                      (notification.type === "UNREAD" && "bg-green-700") ||
-                      (notification.type === "READ" && "bg-orange-700")
-                    } `}
-                  >
-                    {notification.type === "READ" && <TbLetterS size={28} />}
-                    {notification.type === "UNREAD" && <TbLetterQ size={28} />}
-                    {notification.type === "READ" && <TbLetterO size={28} />}
-                  </button>
-                </div>
-
-                <div
-                  className={`flex flex-col flex-1 p-1 rounded-md cursor-pointer
-                ${
-                  notification.status
-                    ? ""
-                    : "bg-slate-100 text-green-800 hover:bg-green-100"
-                }`}
-                >
-                  <h3 className={notification.status ? "" : "font-semibold"}>
-                    {notification.type}
-                  </h3>
-                  <div className="flex justify-between items-center">
-                    <p className="truncate">{notification.message}</p>
-                    <p className="text-xs">
-                      <ReactTimeago date={notification.createdAt} />
-                    </p>
-                  </div>
-                </div>
+          {notifications?.map((notification) => (
+            <Button
+              onClick={() => readNotification(notification.id)}
+              variant="default"
+              key={notification.id}
+              className={`flex flex-col flex-1 p-2 rounded-md cursor-pointer  bg-transparent items-start  dark:text-white text-black w-full
+              hover:bg-sky-600 hover:text-white
+              ${notification.status === "READ" ? "" : "bg-gray-500"}`}
+            >
+              <h3 className={notification.status ? "" : "font-semibold"}>
+                {notification.type}
+              </h3>
+              <div className="flex justify-between items-center gap-3">
+                <p className="truncate">{notification.message}</p>
+                <p className="text-xs">
+                  <ReactTimeago date={notification.createdAt} />
+                </p>
               </div>
-            ))}
-          </InfiniteScroll>
+            </Button>
+          ))}
+          {!notifications?.length && (
+            <div className="truncate">No notifications found</div>
+          )}
         </div>
       </section>
     </>

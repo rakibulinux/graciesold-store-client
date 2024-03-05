@@ -62,7 +62,7 @@ const Navbar = ({ user }: { user?: User }) => {
                 CALL TO ORDER
               </Link>
             </li>
-            <li>
+            <li className="list-none mt-4">
               <Link href="/cart" onClick={() => setOpen(false)}>
                 <CartIcon />
               </Link>
@@ -116,7 +116,7 @@ const Navbar = ({ user }: { user?: User }) => {
             <div className="sm:flex sm:gap-4">
               <div className="hidden sm:flex">
                 {session ? (
-                  <DropdownMenuItems user={user!} />
+                  <DropdownMenuItems user={user} />
                 ) : (
                   <>
                     <Link
